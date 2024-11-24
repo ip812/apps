@@ -1,0 +1,48 @@
+name: Update Docker Image and Deploy
+
+on:
+  repository_dispatch:
+    types: [update-image]
+
+jobs:
+  update-image:
+    runs-on: ubuntu-latest
+
+    permissions: write-all
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Parse event payload
+      id: parse
+      run: |
+        echo "IMAGE_NAME=${{ github.event.client_payload.image_name }}" >> $GITHUB_ENV
+        echo "TAG=${{ github.event.client_payload.tag }}" >> $GITHUB_ENV
+        echo "IMAGE_NAME=${{ env.IMAGE_NAME }}"
+        echo "TAG=${{ env.TAG }}"
+
+    - name: Update Docker image in compose file
+      run: |
+        sed -i "s|${{ env.IMAGE_NAME }}:.*|${{ env.IMAGE_NAME }}:${{ env.TAG }}|" prod/docker-stack.yml
+
+    - name: Commit changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+        # Use GITHUB_TOKEN for authentication
+        git remote set-url origin https://github-actions:${{ secrets.REPO_TOKEN }}@github.com/ip812/apps.git
+
+        git add prod/docker-stack.yml
+        git commit -m "Update image to ${{ env.IMAGE_NAME }}:${{ env.TAG }}"
+        git push origin main
+
+    - name: Trigger another workflow
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/ip812/apps/actions/workflows/deploy.yml/dispatches \
+          -d '{"ref": "main"}'
