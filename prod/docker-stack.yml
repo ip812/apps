@@ -1,0 +1,133 @@
+---
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:2025.1.0
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+    networks:
+      - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+  traefik:
+    image: "traefik:v3.2"
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--experimental.plugins.cloudflarewarp.modulename=github.com/BetterCorp/cloudflarewarp"
+      - "--experimental.plugins.cloudflarewarp.version=v1.3.3"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.trustip.0=2400:cb00::/32"
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+  template:
+    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/go-template:0.2.0
+    secrets:
+      - go_template_domain
+      - go_template_port
+      - go_template_db_name
+      - go_template_db_username
+      - go_template_db_password
+      - go_template_db_host
+      - go_template_db_port
+      - go_template_db_ssl
+      - go_template_aws_region
+      - go_template_aws_access_key_id
+      - go_template_aws_secret_access_key
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.template.rule=Host(`template.ip812.com`)"
+      - "traefik.http.routers.template.entrypoints=web"
+      - "traefik.http.services.template.loadbalancer.server.port=8080"
+      - "traefik.http.services.template.loadbalancer.healthcheck.path=/healthz"
+      - "traefik.http.services.template.loadbalancer.healthcheck.interval=10s"
+    networks:
+      - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+secrets:
+  go_template_domain:
+    external: true
+  go_template_port:
+    external: true
+  go_template_db_name:
+    external: true
+  go_template_db_username:
+    external: true
+  go_template_db_password:
+    external: true
+  go_template_db_host:
+    external: true
+  go_template_db_port:
+    external: true
+  go_template_db_ssl:
+    external: true
+  go_template_aws_region:
+    external: true
+  go_template_aws_access_key_id:
+    external: true
+  go_template_aws_secret_access_key:
+    external: true
+
+networks:
+  ip812_network:
+    driver: overlay
+    attachable: true

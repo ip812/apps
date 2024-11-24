@@ -1,0 +1,230 @@
+---
+name: Deploy 
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "prod/**"
+  repository_dispatch:
+      types: [update-service]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ github.event.client_payload.image_name }}
+  IMAGE_TAG: ${{ github.event.client_payload.image_tag }}
+  COMMIT_URL: ${{ github.event.client_payload.commit_url }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout toolkit
+        uses: actions/checkout@v4
+        with:
+          repository: ip812/toolkit
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: toolkit
+
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          set -e 
+
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --region "${AWS_REGION}" \
+            --filters \
+              "Name=tag:Environment,Values=prod" \
+              "Name=tag:Organization,Values=${{ vars.ORG }}" \
+              "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output json | jq -r '.[]' | head -n 1)
+
+          if [[ -z "${INSTANCE_ID}" ]]; then
+            echo "Error: No instance found matching the given filters."
+            exit 1
+          fi
+          echo "HA instance ID: ${INSTANCE_ID}"
+
+          CMD="export CF_TUNNEL_TOKEN=${{ secrets.CF_TUNNEL_TOKEN }} && \
+               curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
+               docker stack deploy -c - ${{ vars.ORG }} --with-registry-auth"
+          touch deploy_trigger.txt
+          toolkit/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" deploy_trigger.txt
+
+          if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
+            echo "Wait 1 min for all services to start"
+            sleep 60
+          else
+            echo "Wait 10 seconds for all services to start"
+            sleep 10
+          fi
+
+          CMD="docker service ls --format '{{.Image}} {{.Replicas}}'"
+          touch deploy_result.txt
+          toolkit/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" deploy_result.txt
+
+          CNT=0
+          RESULT="$(mktemp)"
+          while read LINE; do
+            [[ -z "${LINE}" ]] && continue
+
+            CNT=$((CNT + 1))
+
+            IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1)" 
+            REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
+            echo "Image: ${IMAGE}"
+            echo "Replicas: ${REPLICAS}"
+
+            if [[ "${REPLICAS}" != "1/1" ]]; then 
+                printf "${IMAGE}, " >> "${RESULT}"
+            fi
+          done < <(cat deploy_result.txt)
+
+          # If there are 0 services to deploy, something went wrong
+          if [[ ${CNT} -eq 0 ]]; then
+            echo "Error: No services were deployed."
+            exit 1
+          fi
+
+          # Teardown
+          rm "${RESULT}"
+
+      - name: Upload the result's artifact of the "Deploy" job
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-result
+          path: deploy_result.txt
+
+  discord-notification:
+    runs-on: ubuntu-24.04
+    needs: deploy
+    if: ${{ always() }}
+  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout toolkit
+        uses: actions/checkout@v4
+        with:
+          repository: ip812/toolkit
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: toolkit
+  
+      - name: Download the result's artifact from the "Deploy" job
+        uses: actions/download-artifact@v4
+        if: ${{ needs.deploy.result == 'success' }}
+        with:
+          name: deploy-result
+  
+      - name: Send notification to Discord's deployments channel
+        run: |
+          set -e
+
+          ENV="prod"
+          COMMIT_LINK="${{ env.COMMIT_URL }}"
+          ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          CNT=0
+          RESULT="$(mktemp)"
+          while read LINE; do
+            [[ -z "${LINE}" ]] && continue
+
+            CNT=$((CNT + 1))
+
+            IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1 | xargs)" 
+            REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2 | xargs)" 
+            echo "Image: ${IMAGE}"
+            echo "Replicas: ${REPLICAS}"
+
+            if [[ "${REPLICAS}" != "1/1" ]]; then 
+                echo "Image ${IMAGE} failed to deploy"
+                printf "${IMAGE}, " >> "${RESULT}"
+            fi
+          done < <(cat deploy_result.txt)
+
+          # If there are 0 services to deploy, something went wrong
+          if [[ ${CNT} -eq 0 ]]; then
+            TITLE="Deployment Service"
+            DESCRIPTION="**0 services** are running after the deployment."
+            STATUS="failure"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            exit 0
+          fi
+
+          # If other error occurred during deployment
+          if [[ "${{ needs.deploy.result }}" != "success" ]]; then
+            TITLE="Deployment Service"
+            DESCRIPTION="The deployment job **failed**."
+            STATUS="failure"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            exit 0
+          fi
+
+          # Remove the ", " at the end
+          if [[ -s "${RESULT}"  ]]; then
+            sed -i 's/, $//' "${RESULT}"
+          fi
+
+          # Count the number of failing services
+          if [[ -s "${RESULT}"  ]]; then
+            CNT_FAILING_SERVICES=$(echo "${RESULT}" | sed 's/, /\n/g' | wc -l)
+          else
+            CNT_FAILING_SERVICES=0
+          fi
+          echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
+
+          if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
+            # Send this notification only when the cluster is recreated
+            if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
+              TITLE="Deployment Service"
+              DESCRIPTION="The deployment was **successful**."
+              STATUS="success"
+              FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              echo "Cluster was recreated successfully"
+            # Send this only when new version of service is available
+            elif [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
+              TITLE="Deployment Service"
+              DESCRIPTION="**${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}** was deployed **successfully**."
+              STATUS="success"
+              FIELDS="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}" 
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              echo "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed successfully"
+            # No need to send notification for every commit to main
+            elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+              echo "Skip Discord notification for regular commits to main"
+            else
+              echo "Unknown Github Action's event: ${{ github.event_name }}"
+            fi
+          else
+            TITLE="Deployment Service"
+            DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
+            STATUS="failure"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            echo "deployment failed"
+          fi
+
+          # Teardown
+          rm "${RESULT}"
