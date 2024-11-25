@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy
+      uses: serversideup/github-action-docker-swarm-deploy@v3
+      with:
+        docker_compose_file_path: "-c prod/docker-stack.yml"
+        ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+        # ssh_remote_known_hosts: "${{ secrets.SSH_PUBLIC_KEY }}"
+        ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
+        registry-username: "iypetrov"
+        registry-token: "${{ secrets.DOCKERHUB_TOKEN }}"
+        stack_name: "ip812"
+        ssh_deploy_user: "ubuntu"
