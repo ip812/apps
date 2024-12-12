@@ -21,13 +21,10 @@ jobs:
         access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Set up ECR login token
+    - name: Get ECR Registry Token
+      id: ecr-token
       run: |
-        echo "AWS_ECR_ACCESS_TOKEN=$(aws ecr get-login-password --region $AWS_REGION)" >> $GITHUB_ENV
-      env:
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        echo "REGISTRY_TOKEN=$(aws ecr get-login-password --region ${{ secrets.AWS_REGION }})" >> $GITHUB_ENV
 
     - name: Deploy
       uses: serversideup/github-action-docker-swarm-deploy@v3
@@ -35,9 +32,8 @@ jobs:
         docker_compose_file_path: "-c prod/docker-stack.yml"
         ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
         ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
-        registry-username: "ip812"
-        registry-token: "${{ env.AWS_ECR_ACCESS_TOKEN }}"
+        registry-username: "AWS"
+        registry-token: ${{ env.REGISTRY_TOKEN }}
         stack_name: "ip812"
         ssh_deploy_user: "ubuntu"
         registry: ${{ steps.ecr.outputs.account }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-       
