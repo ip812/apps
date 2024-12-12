@@ -39,7 +39,7 @@ jobs:
         docker_compose_file_path: "-c prod/docker-stack.yml"
         ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
         ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
-        registry-username: "ip812/blog"
+        registry-username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         registry-token: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         stack_name: "ip812"
         ssh_deploy_user: "ubuntu"
