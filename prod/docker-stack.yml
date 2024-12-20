@@ -1,48 +1,42 @@
+---
 services:
-  blog:
-    image: 678468774710.dkr.ecr.eu-west-2.amazonaws.com/ip812/blog:0.2.1
+  traefik:
+    image: "traefik:v3.2"
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.deviliablog.com`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
     ports:
-      - "80:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - ip812-network
+
+  blog:
+    image: iypetrov/go-indie-hacking-starter:0.2.1
     environment:
-      - APP_ADDR=localhost
+      - APP_ADDR=0.0.0.0
       - APP_PORT=8080
       - APP_DB_FILE=blog.db
+    labels:
+      - "--log.level=DEBUG"
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.rule=Host(`deviliablog.com`)"
+      - "traefik.http.routers.blog.entrypoints=web"
+      - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
-      - portainer-network
-
-  portainer_agent:
-    image: portainer/agent:2.21.5
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/volumes:/var/lib/docker/volumes
-    networks:
-      - portainer-network
-    deploy:
-      mode: global
-      placement:
-        constraints: [node.platform.os == linux]
-
-  portainer:
-    image: portainer/portainer-ee:2.21.5
-    command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
-    ports:
-      - "9443:9443"
-      - "9000:9000"
-      - "8000:8000"
-    volumes:
-      - portainer_data:/data
-    networks:
-      - portainer-network
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints: [node.role == manager]
+      - ip812-network
 
 networks:
-  portainer-network:
+  ip812-network:
     driver: overlay
     attachable: true
-
-volumes:
-  portainer_data:
