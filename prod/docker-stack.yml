@@ -22,7 +22,8 @@ services:
       - ip812-network
 
   blog:
-    image: 678468774710.dkr.ecr.eu-west-2.amazonaws.com/ip812/blog:0.2.1
+    # image: 678468774710.dkr.ecr.eu-west-2.amazonaws.com/ip812/blog:0.2.1
+    image: iypetrov/go-indie-hacking-starter:0.4.0
     environment:
       - APP_ADDR=0.0.0.0
       - APP_PORT=8080
