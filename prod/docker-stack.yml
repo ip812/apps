@@ -23,7 +23,7 @@ services:
 
   blog:
     # image: 678468774710.dkr.ecr.eu-west-2.amazonaws.com/ip812/blog:0.2.1
-    image: iypetrov/go-indie-hacking-starter:0.8.3
+    image: iypetrov/go-indie-hacking-starter:0.8.4
     secrets:
       - aws_region
       - aws_access_key_id
