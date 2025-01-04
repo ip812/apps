@@ -25,9 +25,12 @@ services:
     # image: 678468774710.dkr.ecr.eu-west-2.amazonaws.com/ip812/blog:0.2.1
     image: iypetrov/go-indie-hacking-starter:0.8.4
     secrets:
-      - aws_region
-      - aws_access_key_id
-      - aws_secret_access_key
+      - blog_domain
+      - blog_port
+      - blog_db_file
+      - blog_aws_region
+      - blog_aws_access_key_id
+      - blog_aws_secret_access_key
     labels:
       - "--log.level=DEBUG"
       - "traefik.enable=true"
@@ -37,15 +40,21 @@ services:
     networks:
       - ip812-network
 
+secrets:
+  blog_domain:
+    external: true
+  blog_port:
+    external: true
+  blog_db_file:
+    external: true
+  blog_aws_region:
+    external: true
+  blog_aws_access_key_id:
+    external: true
+  blog_aws_secret_access_key:
+    external: true
+
 networks:
   ip812-network:
     driver: overlay
     attachable: true
-
-secrets:
-  aws_region:
-    external: true
-  aws_access_key_id:
-    external: true
-  aws_secret_access_key:
-    external: true
