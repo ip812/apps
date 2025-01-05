@@ -17,7 +17,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - ip812-network
+      - agent_network
 
   agent:
     image: portainer/agent:2.25.1
@@ -41,7 +41,6 @@ services:
     volumes:
       - portainer_data:/data
     networks:
-      - ip812-network
       - agent_network
     deploy:
       mode: replicated
@@ -64,7 +63,7 @@ services:
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
-      - ip812-network
+      - agent_network
 
 secrets:
   blog_domain:
