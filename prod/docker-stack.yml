@@ -38,6 +38,11 @@ services:
       - "9443:9443"
       - "9000:9000"
       - "8000:8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.deviliablog.com`)"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     volumes:
       - portainer_data:/data
     networks:
