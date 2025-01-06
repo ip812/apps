@@ -1,7 +1,7 @@
 ---
 services:
   cloudflared:
-    image: cloudflare/cloudflared:2024.12.2
+    image: cloudflare/cloudflared:latest
     command: >
       tunnel run --token 4sREraW9yKawY/rPxmKpWDCdhX6sYz02HhAE1A5HrbDS9JCb771vv0hoXDmeBajUnTKdjoFVF9AEMaU79hqi4g==
     secrets:
