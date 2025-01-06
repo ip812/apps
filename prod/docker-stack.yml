@@ -8,8 +8,6 @@ services:
       - TUNNEL_TOKEN_FILE=/run/secrets/ip812_tunnel_secret
     secrets:
       - ip812_tunnel_secret
-    volumes:
-      - ./cloudflared:/etc/cloudflared
     networks:
       - agent_network
 
