@@ -3,9 +3,7 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
     command: >
-      tunnel run ip812_tunnel
-    environment:
-      - TUNNEL_TOKEN_FILE=/run/secrets/ip812_tunnel_secret
+      tunnel run --token /run/secrets/ip812_tunnel_token
     secrets:
       - ip812_tunnel_secret
     networks:
@@ -73,7 +71,7 @@ services:
       - agent_network
 
 secrets:
-  ip812_tunnel_secret:
+  ip812_tunnel_token:
     external: true
   blog_domain:
     external: true
