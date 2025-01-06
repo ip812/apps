@@ -1,5 +1,18 @@
 ---
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:2024.12.2
+    container_name: cloudflared
+    command: >
+      tunnel run ip812_tunnel
+    environment:
+      - TUNNEL_TOKEN_FILE=/run/secrets/ip812_tunnel_secret
+    secrets:
+      - ip812_tunnel_secret
+    restart: unless-stopped
+    volumes:
+      - ./cloudflared:/etc/cloudflared
+
   traefik:
     image: "traefik:v3.2"
     command:
@@ -62,6 +75,8 @@ services:
       - agent_network
 
 secrets:
+  ip812_tunnel_secret:
+    external: true
   blog_domain:
     external: true
   blog_port:
