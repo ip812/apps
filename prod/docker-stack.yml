@@ -3,7 +3,7 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
     command: >
-      tunnel run --token /run/secrets/ip812_tunnel_token
+      tunnel run --token 4sREraW9yKawY/rPxmKpWDCdhX6sYz02HhAE1A5HrbDS9JCb771vv0hoXDmeBajUnTKdjoFVF9AEMaU79hqi4g==
     secrets:
       - ip812_tunnel_token
     networks:
