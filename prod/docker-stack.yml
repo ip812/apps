@@ -5,7 +5,7 @@ services:
     command: >
       tunnel run --token /run/secrets/ip812_tunnel_token
     secrets:
-      - ip812_tunnel_secret
+      - ip812_tunnel_token
     networks:
       - agent_network
 
