@@ -5,7 +5,7 @@ services:
     command: >
       tunnel run
     environment:
-      - TUNNEL_TOKEN=eyJhIjoiY1I1NGIzYzc5ZTU0N2ZlOWNiY2MwNDU2ZjY3YzdiYmYiLCJ0IjoiZGRhNDhhZmMtOWQ5Zi00MGQ5LWFkMmMtYjU1MjhlZjNlMGEyIiwicyI6IjRzUkVyYVc5eUthd1kvclB4bUtwV0RDZGhYNnNZejAySGhBRTFBNUhyYkRTOUpDYjc3MXZ2MGhvWERtZUJhalVuVEtkam9GVkY5QUVNYVU3OWhxaTRnPT0ifQ==
+      - TUNNEL_TOKEN=eyJhIjoiY2I1NGIzYzc5ZTU0N2ZlOWNiY2MwNDU2ZjY3YzdiYmYiLCJ0IjoiZGRhNDhhZmMtOWQ5Zi00MGQ5LWFkMmMtYjU1MjhlZjNlMGEyIiwicyI6IjRzUkVyYVc5eUthd1kvclB4bUtwV0RDZGhYNnNZejAySGhBRTFBNUhyYkRTOUpDYjc3MXZ2MGhvWERtZUJhalVuVEtkam9GVkY5QUVNYVU3OWhxaTRnPT0ifQ==
     secrets:
       - ip812_tunnel_token
     networks:
