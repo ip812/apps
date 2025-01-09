@@ -42,7 +42,7 @@ jobs:
                 --region ${{ secrets.AWS_REGION }} \
                 --document-name "AWS-RunShellScript" \
                 --targets "Key=instanceIds,Values=${instance_id}" \
-                --parameters 'commands=["docker stack deploy -c prod/docker-stack.yml ip812"]' > /dev/null
+                --parameters 'commands=["docker stack deploy -c prod/docker-stack.yml ip812"]'
         done < <(aws ec2 describe-instances \
             --region ${{ secrets.AWS_REGION }} \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
