@@ -1,15 +1,5 @@
 ---
 services:
-  cloudflared:
-    image: cloudflare/cloudflared:2024.12.2
-    command: tunnel run
-    environment:
-      - TUNNEL_TOKEN=$(cat /run/secret/ip812_tunnel_token)
-    secrets:
-      - ip812_tunnel_token
-    networks:
-      - agent_network
-
   traefik:
     image: "traefik:v3.2"
     command:
@@ -29,7 +19,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - agent_network
+      - ip812_network
 
   portainer:
     image: portainer/portainer-ce:2.25.1
@@ -47,7 +37,7 @@ services:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - agent_network
+      - ip812_network
     deploy:
       mode: replicated
       replicas: 1
@@ -69,11 +59,9 @@ services:
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
-      - agent_network
+      - ip812_network
 
 secrets:
-  ip812_tunnel_token:
-    external: true
   blog_domain:
     external: true
   blog_port:
@@ -88,10 +76,7 @@ secrets:
     external: true
 
 networks:
-  ip812-network:
-    driver: overlay
-    attachable: true
-  agent_network:
+  ip812_network:
     driver: overlay
     attachable: true
 
