@@ -33,6 +33,10 @@ jobs:
 
     - name: Deploy
       run: |
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
+
         while read -r instance_id; do
             aws ssm send-command \
                 --region ${{ secrets.AWS_REGION }} \
@@ -40,9 +44,10 @@ jobs:
                 --targets "Key=instanceIds,Values=${instance_id}" \
                 --parameters 'commands=["docker stack deploy -c prod/docker-stack.yml ip812"]' > /dev/null
         done < <(aws ec2 describe-instances \
-            --region eu-central-1 \
+            --region ${{ secrets.AWS_REGION }} \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
             --filters "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]')
+
 
