@@ -39,13 +39,29 @@ jobs:
         echo "REGISTRY_TOKEN=$(aws ecr get-login-password --region ${{ secrets.AWS_REGION }})" >> $GITHUB_ENV
 
     - name: Deploy
-      uses: serversideup/github-action-docker-swarm-deploy@v3
-      with:
-        docker_compose_file_path: "-c prod/docker-stack.yml"
-        ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
-        ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
-        registry-username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        registry-token: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        stack_name: "ip812"
-        ssh_deploy_user: "ubuntu"
-        registry: ${{ steps.ecr.outputs.account }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      run: |
+        while read -r instance_id; do
+            aws ssm send-command \
+                --region $AWS_REGION ${{ secrets.AWS_REGION }} \
+                --document-name "AWS-RunShellScript" \
+                --targets "Key=instanceIds,Values=${instance_id}" \
+                --parameters 'commands=["docker stack deploy -c prod/docker-stack.yml ip812"]' > /dev/null
+        done < <(aws ec2 describe-instances \
+            --region eu-central-1 \
+            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
+            --filters "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output json | jq -r '.[]')
+
+
+    # - name: Deploy
+    #   uses: serversideup/github-action-docker-swarm-deploy@v3
+    #   with:
+    #     docker_compose_file_path: "-c prod/docker-stack.yml"
+    #     ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+    #     ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
+    #     registry-username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     registry-token: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     stack_name: "ip812"
+    #     ssh_deploy_user: "ubuntu"
+    #     registry: ${{ steps.ecr.outputs.account }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
