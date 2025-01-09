@@ -4,6 +4,7 @@ services:
     image: cloudflare/cloudflared:2024.12.2
     command: tunnel run
     environment:
+      - TUNNEL_ID=388fbc6c-66f6-4f19-bafd-150a0fa85ac6
       - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
       - ip812_network
