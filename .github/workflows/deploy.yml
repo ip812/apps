@@ -25,13 +25,6 @@ jobs:
         verbose: false
         arch: amd64
 
-    - name: Setup AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
     - name: Login to ECR
       id: ecr
       uses: jwalton/gh-ecr-login@v3
@@ -49,7 +42,7 @@ jobs:
       run: |
         while read -r instance_id; do
             aws ssm send-command \
-                --region $AWS_REGION ${{ secrets.AWS_REGION }} \
+                --region ${{ secrets.AWS_REGION }} \
                 --document-name "AWS-RunShellScript" \
                 --targets "Key=instanceIds,Values=${instance_id}" \
                 --parameters 'commands=["docker stack deploy -c prod/docker-stack.yml ip812"]' > /dev/null
