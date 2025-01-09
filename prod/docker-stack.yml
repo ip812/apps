@@ -4,7 +4,7 @@ services:
     image: cloudflare/cloudflared:2024.12.2
     command: tunnel run
     environment:
-      - TUNNEL_TOKEN=/run/secrets/ip812_tunnel_token
+      - TUNNEL_TOKEN=$(cat /run/secret/ip812_tunnel_token)
     secrets:
       - ip812_tunnel_token
     networks:
