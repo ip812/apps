@@ -9,7 +9,6 @@ services:
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
       - "--entryPoints.websecure.forwardedHeaders.insecure=true"
-      - "--entryPoints.web.address=localhost:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.deviliablog.com`)"
