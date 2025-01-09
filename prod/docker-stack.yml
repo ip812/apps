@@ -6,7 +6,7 @@ services:
     environment:
       - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
-      - agent_network
+      - ip812_network
 
   traefik:
     image: "traefik:v3.2"
@@ -27,7 +27,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - agent_network
+      - ip812_network
 
   portainer:
     image: portainer/portainer-ce:2.25.1
@@ -45,6 +45,7 @@ services:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
+      - ip812_network
       - agent_network
     deploy:
       mode: replicated
@@ -67,7 +68,7 @@ services:
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
-      - agent_network
+      - ip812_network
 
 secrets:
   blog_domain:
@@ -84,6 +85,10 @@ secrets:
     external: true
 
 networks:
+  ip812_network:
+    driver: overlay
+    attachable: true
+  # don't know why, but if there is no network with name agent_network, portainer doesn't work
   agent_network:
     driver: overlay
     attachable: true
