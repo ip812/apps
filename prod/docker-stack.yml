@@ -4,7 +4,7 @@ services:
     image: cloudflare/cloudflared:2024.12.2
     command: tunnel run --token $TUNNEL_TOKEN
     environment:
-      - TUNNEL_TOKEN=eyJhIjoiY2I1NGIzYzc5ZTU0N2ZlOWNiY2MwNDU2ZjY3YzdiYmYiLCJ0IjoiMzg4ZmJjNmMtNjZmNi00ZjE5LWJhZmQtMTUwYTBmYTg1YWM2IiwicyI6IjRzUkVyYVc5eUthd1kvclB4bUtwV0RDZGhYNnNZejAySGhBRTFBNUhyYkRTOUpDYjc3MXZ2MGhvWERtZUJhalVuVEtkam9GVkY5QUVNYVU3OWhxaTRnPT0ifQ==
+      - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
       - ip812_network
 
