@@ -19,12 +19,11 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install AWS CLI v2
-      run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
-        unzip -q /tmp/awscliv2.zip -d /tmp
-        rm /tmp/awscliv2.zip
-        sudo /tmp/aws/install --update
-        rm -rf /tmp/aws/
+      uses: unfor19/install-aws-cli-action@v1
+      with:
+        version: 2
+        verbose: false
+        arch: amd64
 
     - name: Setup AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
