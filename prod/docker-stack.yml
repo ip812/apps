@@ -6,7 +6,7 @@ services:
     environment:
       - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
-      - ip812_network
+      - agent_network
 
   traefik:
     image: "traefik:v3.2"
@@ -27,7 +27,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - ip812_network
+      - agent_network
 
   portainer:
     image: portainer/portainer-ce:2.25.1
@@ -45,7 +45,7 @@ services:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ip812_network
+      - agent_network
     deploy:
       mode: replicated
       replicas: 1
@@ -67,7 +67,7 @@ services:
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
-      - ip812_network
+      - agent_network
 
 secrets:
   blog_domain:
@@ -84,7 +84,7 @@ secrets:
     external: true
 
 networks:
-  ip812_network:
+  agent_network:
     driver: overlay
     attachable: true
 
