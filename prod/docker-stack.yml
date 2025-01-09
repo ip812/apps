@@ -2,7 +2,7 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
-    command: tunnel run --token $TUNNEL_TOKEN
+    command: tunnel run
     environment:
       - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
