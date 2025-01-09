@@ -2,9 +2,8 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
-    command: tunnel run --token eyJhIjoiY2I1NGIzYzc5ZTU0N2ZlOWNiY2MwNDU2ZjY3YzdiYmYiLCJ0IjoiMzg4ZmJjNmMtNjZmNi00ZjE5LWJhZmQtMTUwYTBmYTg1YWM2IiwicyI6IjRzUkVyYVc5eUthd1kvclB4bUtwV0RDZGhYNnNZejAySGhBRTFBNUhyYkRTOUpDYjc3MXZ2MGhvWERtZUJhalVuVEtkam9GVkY5QUVNYVU3OWhxaTRnPT0ifQ==
+    command: tunnel run --token $TUNNEL_TOKEN
     environment:
-      - TUNNEL_ID=388fbc6c-66f6-4f19-bafd-150a0fa85ac6
       - TUNNEL_TOKEN=eyJhIjoiY2I1NGIzYzc5ZTU0N2ZlOWNiY2MwNDU2ZjY3YzdiYmYiLCJ0IjoiMzg4ZmJjNmMtNjZmNi00ZjE5LWJhZmQtMTUwYTBmYTg1YWM2IiwicyI6IjRzUkVyYVc5eUthd1kvclB4bUtwV0RDZGhYNnNZejAySGhBRTFBNUhyYkRTOUpDYjc3MXZ2MGhvWERtZUJhalVuVEtkam9GVkY5QUVNYVU3OWhxaTRnPT0ifQ==
     networks:
       - ip812_network
