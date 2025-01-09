@@ -3,7 +3,7 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
     command: >
-      sh -c export TUNNEL_TOKEN=$(cat /run/secrets/ip812_tunnel_token) && tunnel run
+      tunnel run --token --secret-file /run/secrets/ip812_tunnel_token
     secrets:
       - ip812_tunnel_token
     networks:
