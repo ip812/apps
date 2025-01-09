@@ -18,6 +18,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Install AWS CLI v2
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+        unzip -q /tmp/awscliv2.zip -d /tmp
+        rm /tmp/awscliv2.zip
+        sudo /tmp/aws/install --update
+        rm -rf /tmp/aws/
+
     - name: Setup AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -53,15 +61,3 @@ jobs:
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]')
 
-
-    # - name: Deploy
-    #   uses: serversideup/github-action-docker-swarm-deploy@v3
-    #   with:
-    #     docker_compose_file_path: "-c prod/docker-stack.yml"
-    #     ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
-    #     ssh_remote_hostname: "${{ secrets.HOSTNAME }}"
-    #     registry-username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     registry-token: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     stack_name: "ip812"
-    #     ssh_deploy_user: "ubuntu"
-    #     registry: ${{ steps.ecr.outputs.account }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
