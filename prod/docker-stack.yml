@@ -1,5 +1,13 @@
 ---
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:2024.12.2
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
+    networks:
+      - ip812_network
+
   traefik:
     image: "traefik:v3.2"
     command:
