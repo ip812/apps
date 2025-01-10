@@ -7,6 +7,9 @@ services:
       - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
     networks:
       - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 3
 
   traefik:
     image: "traefik:v3.2"
@@ -28,6 +31,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 3
 
   portainer:
     image: portainer/portainer-ce:2.25.1
@@ -69,6 +75,9 @@ services:
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     networks:
       - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 3
 
 secrets:
   blog_domain:
