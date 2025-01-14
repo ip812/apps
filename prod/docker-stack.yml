@@ -49,6 +49,10 @@ services:
       - "traefik.http.routers.blog.rule=Host(`deviliablog.com`)"
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
+    volumes:
+      - blog_db:/app/blog.db
+      - blog_db-shm:/app/blog.db-shm
+      - blog_db-wal:/app/blog.db-wal
     # volumes:
     #   - "/var/lib/blog/blog.db:/app/blog.db"
     #   - "/var/lib/blog/blog.db-shm:/app/blog.db-shm"
@@ -72,6 +76,11 @@ secrets:
     external: true
   blog_aws_secret_access_key:
     external: true
+
+volumes:
+  blog_db:
+  blog_db-shm:
+  blog_db-wal:
 
 networks:
   ip812_network:
