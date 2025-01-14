@@ -50,9 +50,9 @@ services:
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     volumes:
-      - blog_db:/app/blog.db
-      - blog_db_shm:/app/blog.db-shm
-      - blog_db_wal:/app/blog.db-wal
+      - blog_db:/blog.db
+      - blog_db_shm:/blog.db-shm
+      - blog_db_wal:/blog.db-wal
     networks:
       - ip812_network
     deploy:
