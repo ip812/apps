@@ -51,12 +51,8 @@ services:
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
     volumes:
       - blog_db:/app/blog.db
-      - blog_db-shm:/app/blog.db-shm
-      - blog_db-wal:/app/blog.db-wal
-    # volumes:
-    #   - "/var/lib/blog/blog.db:/app/blog.db"
-    #   - "/var/lib/blog/blog.db-shm:/app/blog.db-shm"
-    #   - "/var/lib/blog/blog.db-wal:/app/blog.db-wal"
+      - blog_db_shm:/app/blog.db-shm
+      - blog_db_wal:/app/blog.db-wal
     networks:
       - ip812_network
     deploy:
@@ -79,8 +75,8 @@ secrets:
 
 volumes:
   blog_db:
-  blog_db-shm:
-  blog_db-wal:
+  blog_db_shm:
+  blog_db_wal:
 
 networks:
   ip812_network:
