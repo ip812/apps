@@ -36,7 +36,7 @@ services:
       replicas: 3
 
   blog:
-    image: iypetrov/go-indie-hacking-starter:0.9.2
+    image: iypetrov/go-indie-hacking-starter:0.10.2
     secrets:
       - blog_domain
       - blog_port
