@@ -39,9 +39,9 @@ services:
     image: adminer
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.blog.rule=Host(`adminer.deviliablog.com`)"
-      - "traefik.http.routers.blog.entrypoints=web"
-      - "traefik.http.services.blog.loadbalancer.server.port=8080"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.deviliablog.com`)"
+      - "traefik.http.routers.adminer.entrypoints=web"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
     volumes:
       - blog_db:/data
     networks:
