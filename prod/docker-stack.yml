@@ -35,6 +35,21 @@ services:
       mode: replicated
       replicas: 3
 
+  adminer:
+    image: adminer
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.rule=Host(`adminer.deviliablog.com`)"
+      - "traefik.http.routers.blog.entrypoints=web"
+      - "traefik.http.services.blog.loadbalancer.server.port=8080"
+    volumes:
+      - blog_db:/data
+    networks:
+      - ip812_network
+    deploy:
+      mode: replicated
+      replicas: 1
+
   blog:
     image: iypetrov/go-indie-hacking-starter:0.10.4
     secrets:
