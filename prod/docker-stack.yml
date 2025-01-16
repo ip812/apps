@@ -35,21 +35,6 @@ services:
       mode: replicated
       replicas: 3
 
-  adminer:
-    image: adminer:4.8.1
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.adminer.rule=Host(`adminer.deviliablog.com`)"
-      - "traefik.http.routers.adminer.entrypoints=web"
-      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
-    volumes:
-      - blog_db:/data
-    networks:
-      - ip812_network
-    deploy:
-      mode: replicated
-      replicas: 1
-
   # litestream:
   #   image: litestream/litestream:0.3.13
   #   command: ["replicate"]
