@@ -9,7 +9,7 @@ services:
       - ip812_network
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
 
   traefik:
     image: "traefik:v3.2"
@@ -20,8 +20,6 @@ services:
       - "--log.level=DEBUG"
       - "--accesslog=true"
       - "--entryPoints.web.address=:80"
-      - "--entryPoints.websecure.address=:443"
-      - "--entryPoints.websecure.forwardedHeaders.insecure=true"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
@@ -35,7 +33,7 @@ services:
       - ip812_network
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
 
   # litestream:
   #   image: litestream/litestream:0.3.13
