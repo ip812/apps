@@ -67,7 +67,7 @@ services:
       - ip812_network
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
 
 secrets:
   blog_domain:
