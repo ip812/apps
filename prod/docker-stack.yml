@@ -50,7 +50,7 @@ services:
   #     replicas: 1
 
   blog:
-    image: iypetrov/go-indie-hacking-starter:0.10.4
+    image: iypetrov/go-indie-hacking-starter:0.10.5
     secrets:
       - blog_domain
       - blog_port
