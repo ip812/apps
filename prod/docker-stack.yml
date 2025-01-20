@@ -16,8 +16,6 @@ services:
     command:
       - "--log.level=DEBUG"
       - "--accesslog=true"
-      - "--accesslog.fields.headers.defaultmode=keep"
-      - "--accesslog.fields.headers.names.Authorization=redact"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
