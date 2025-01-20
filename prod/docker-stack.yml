@@ -17,7 +17,6 @@ services:
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--log.level=DEBUG"
       - "--accesslog=true"
       - "--entryPoints.web.address=:80"
     labels:
