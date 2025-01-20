@@ -22,7 +22,7 @@ services:
       - "--entryPoints.websecure.forwardedHeaders.insecure=true"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.deviliablog.com`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.entrypoints=web"
     ports:
