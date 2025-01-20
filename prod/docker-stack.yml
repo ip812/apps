@@ -18,6 +18,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--log.level=DEBUG"
+      - "--accesslog=true"
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
       - "--entryPoints.websecure.forwardedHeaders.insecure=true"
