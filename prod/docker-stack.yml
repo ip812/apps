@@ -14,19 +14,18 @@ services:
   traefik:
     image: "traefik:v3.2"
     command:
-      - "--log.level=DEBUG"
-      - "--accesslog=true"
-      - "--accesslog.fields.headers.defaultmode=keep"
-      - "--accesslog.fields.headers.names.Authorization=redact"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
+      - "--experimental.plugins.real-ip-from-cloudflare-proxy-tunnel.modulename=github.com/traefik/plugin-real-ip-from-cloudflare-proxy-tunnel"
+      - "--experimental.plugins.real-ip-from-cloudflare-proxy-tunnel.version=v1.3.3"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.middlewares.real-ip-from-cloudflare.plugin.real-ip-from-cloudflare-proxy-tunnel=true"
     ports:
       - "80:80"
     volumes:
