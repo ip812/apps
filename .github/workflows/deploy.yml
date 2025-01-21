@@ -43,7 +43,7 @@ jobs:
                 --document-name "AWS-RunShellScript" \
                 --targets "Key=instanceIds,Values=${instance_id}" \
                 --parameters 'commands=[
-                    "export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.REPO_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --prune"
+                    "export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.GITHUB_ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --prune"
                 ]'
         done < <(aws ec2 describe-instances \
             --region ${{ secrets.AWS_REGION }} \
