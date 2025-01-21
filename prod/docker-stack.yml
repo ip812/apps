@@ -19,7 +19,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
       - "--experimental.plugins.cloudflarewarp.modulename=github.com/BetterCorp/cloudflarewarp"
-      - "--experimental.plugins.cloudflarewarp.version=v1.4.0"
+      - "--experimental.plugins.cloudflarewarp.version=v1.3.3"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
