@@ -20,6 +20,7 @@ services:
       - "--entryPoints.web.address=:80"
       - "--experimental.plugins.cloudflarewarp.modulename=github.com/BetterCorp/cloudflarewarp"
       - "--experimental.plugins.cloudflarewarp.version=v1.3.3"
+      - "--providers.file.directory=/etc/traefik/dynamic-config"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
@@ -30,6 +31,7 @@ services:
       - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/etc/traefik/dynamic-config:/etc/traefik/dynamic-config"
     networks:
       - ip812_network
     deploy:
