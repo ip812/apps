@@ -18,8 +18,8 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
-      - "--experimental.plugins.real-ip-from-cloudflare-proxy-tunnel.modulename=github.com/traefik/plugin-real-ip-from-cloudflare-proxy-tunnel"
-      - "--experimental.plugins.real-ip-from-cloudflare-proxy-tunnel.version=v1.3.3"
+      - "--experimental.plugins.cloudflarewarp.modulename=github.com/BetterCorp/cloudflarewarp"
+      - "--experimental.plugins.cloudflarewarp.version=v1.4.0"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
