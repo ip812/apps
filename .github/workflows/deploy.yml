@@ -37,25 +37,45 @@ jobs:
         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
 
-        while read -r instance_id; do
-            aws ssm send-command \
-                --region ${{ secrets.AWS_REGION }} \
+        exec_cmd() {
+            if [[ $# -ne 2 ]]; then
+                echo "provide 2 args"
+                return 1
+            fi
+
+            local cmd="$1"
+            local instance_id="$2"
+
+            cmd_id="$(aws ssm send-command \
+                --region eu-central-1 \
                 --document-name "AWS-RunShellScript" \
                 --targets "Key=instanceIds,Values=${instance_id}" \
-                --parameters 'commands=[
-                     "export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
-                      curl -H \"Authorization: token ${{ secrets.ACCESS_TOKEN }}\" -s \
-                      https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
-                      docker stack deploy -c - ip812"]'
-        done < <(aws ec2 describe-instances \
-            --region ${{ secrets.AWS_REGION }} \
-            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
-            --filters "Name=instance-state-name,Values=running" \
-            --query "Reservations[].Instances[].InstanceId" \
-            --output json | jq -r '.[]')
+                --parameters "commands=[\"${cmd}\"]" \
+                --query 'Command.CommandId' \
+                --output text)"
 
-    - name: Discord Notification
-      run: |
+            while true; do
+                status="$(aws ssm get-command-invocation \
+                    --region eu-central-1 \
+                    --instance-id "${instance_id}" \
+                    --command-id ${cmd_id} \
+                    --query 'Status' \
+                    --output text)"
+                if [[ "${status}" != "InProgress" ]]; then
+                    break
+                fi
+                sleep 1
+            done
+
+            aws ssm get-command-invocation \
+                --region eu-central-1 \
+                --instance-id "${instance_id}" \
+                --command-id ${cmd_id} \
+                --query 'StandardOutputContent' \
+                --output text
+        }
+
+        send_discord_notification() {
           curl -H "Content-Type: application/json" -X POST -d '{
             "embeds": [
               {
@@ -71,4 +91,20 @@ jobs:
               }
             ]
           }' ${{ secrets. DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
+        }
+
+        while read -r instance_id; do
+            cmd="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} curl -H \"Authorization: token ${{ secrets.ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812"
+            exec_cmd "${cmd}" "${instance_id}"
+
+            result="docker service ls"
+            exec_cmd "${result}" "${instance_id}"
+
+            send_discord_notification
+        done < <(aws ec2 describe-instances \
+            --region ${{ secrets.AWS_REGION }} \
+            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
+            --filters "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output json | jq -r '.[]')
 
