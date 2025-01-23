@@ -32,11 +32,15 @@ jobs:
         echo "REGISTRY_TOKEN=$(aws ecr get-login-password --region ${{ secrets.AWS_REGION }})" >> $GITHUB_ENV
 
     - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        IP812_TUNNEL_TOKEN: ${{ secrets.IP812_TUNNEL_TOKEN }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        DISCORD_DEPLOYMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
-        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
-
         exec_cmd() {
             if [[ $# -ne 2 ]]; then
                 echo "provide 2 args"
@@ -47,7 +51,7 @@ jobs:
             local instance_id="$2"
 
             cmd_id="$(aws ssm send-command \
-                --region eu-central-1 \
+                --region "${AWS_REGION}" \
                 --document-name "AWS-RunShellScript" \
                 --targets "Key=instanceIds,Values=${instance_id}" \
                 --parameters "commands=[\"${cmd}\"]" \
@@ -56,9 +60,9 @@ jobs:
 
             while true; do
                 status="$(aws ssm get-command-invocation \
-                    --region eu-central-1 \
+                    --region "${AWS_REGION}" \
                     --instance-id "${instance_id}" \
-                    --command-id ${cmd_id} \
+                    --command-id "${cmd_id}" \
                     --query 'Status' \
                     --output text)"
                 if [[ "${status}" != "InProgress" ]]; then
@@ -68,34 +72,19 @@ jobs:
             done
 
             aws ssm get-command-invocation \
-                --region eu-central-1 \
+                --region "${AWS_REGION}" \
                 --instance-id "${instance_id}" \
-                --command-id ${cmd_id} \
+                --command-id "${cmd_id}" \
                 --query 'StandardOutputContent' \
                 --output text
         }
 
-        send_discord_notification() {
-          curl -H "Content-Type: application/json" -X POST -d '{
-            "embeds": [
-              {
-                "title": "Deployment Status",
-                "description": "The deployment was **'successful'**.",
-                "color": '3066993',
-                "fields": [
-                  {"name": "Version", "value": "v1.2.3", "inline": true},
-                  {"name": "Environment", "value": "prod", "inline": true}
-                ],
-                "footer": {"text": "GitHub Actions", "icon_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"},
-                "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-              }
-            ]
-          }' ${{ secrets. DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
-        }
-
         while read -r instance_id; do
-            # cmd="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} curl -H \"Authorization: token ${{ secrets.ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812"
-            cmd="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }}; curl -H \"Authorization: token ${{ secrets.ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812"
+            cmd="export IP812_TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN} && \
+            curl -H \"Authorization: token ${ACCESS_TOKEN}\" -s https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/prod/docker-stack.yml | \
+            docker stack deploy -c - ip812"
+
+            echo "Executing: ${cmd}"
             exec_cmd "${cmd}" "${instance_id}"
 
             result="docker service ls"
@@ -103,7 +92,7 @@ jobs:
 
             send_discord_notification
         done < <(aws ec2 describe-instances \
-            --region ${{ secrets.AWS_REGION }} \
+            --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
             --filters "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
