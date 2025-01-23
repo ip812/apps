@@ -79,6 +79,24 @@ jobs:
                 --output text
         }
 
+        send_discord_notification() {
+          curl -H "Content-Type: application/json" -X POST -d '{
+            "embeds": [
+              {
+                "title": "Deployment Status",
+                "description": "The deployment was **'successful'**.",
+                "color": '3066993',
+                "fields": [
+                  {"name": "Version", "value": "v1.2.3", "inline": true},
+                  {"name": "Environment", "value": "prod", "inline": true}
+                ],
+                "footer": {"text": "GitHub Actions", "icon_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"},
+                "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+              }
+            ]
+          }' ${{ secrets. DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
+        }
+
         while read -r instance_id; do
             cmd="export IP812_TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN} && \
             curl -H \\\"Authorization: token ${ACCESS_TOKEN}\\\" -s https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/prod/docker-stack.yml | \
