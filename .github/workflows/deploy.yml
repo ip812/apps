@@ -81,7 +81,7 @@ jobs:
 
         while read -r instance_id; do
             cmd="export IP812_TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN} && \
-            curl -H \"Authorization: token ${ACCESS_TOKEN}\" -s https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/prod/docker-stack.yml | \
+            curl -H \\\"Authorization: token ${ACCESS_TOKEN}\\\" -s https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/prod/docker-stack.yml | \
             docker stack deploy -c - ip812"
 
             echo "Executing: ${cmd}"
