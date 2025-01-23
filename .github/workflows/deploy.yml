@@ -105,6 +105,8 @@ jobs:
             echo "Executing: ${cmd}"
             exec_cmd "${cmd}" "${instance_id}"
 
+            sleep 5
+
             result="docker service ls"
             exec_cmd "${result}" "${instance_id}"
 
