@@ -38,6 +38,20 @@ services:
       mode: replicated
       replicas: 1
 
+  dd-agent:
+    image: gcr.io/datadoghq/agent:7
+    deploy:
+      mode: global
+    environment:
+      DD_API_KEY: "70157b6a8877fa51c608d22f27315278"
+      DD_SITE: "datadoghq.eu"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    restart: unless-stopped
+
   # litestream:
   #   image: litestream/litestream:0.3.13
   #   command: ["replicate"]

@@ -5,6 +5,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+  repository_dispatch:
+    types: [update-image]
 
 jobs:
   deploy:
@@ -58,7 +60,9 @@ jobs:
                 --query 'Command.CommandId' \
                 --output text)"
 
+            cnt=0
             while true; do
+                cnt=$((cnt + 1))
                 status="$(aws ssm get-command-invocation \
                     --region "${AWS_REGION}" \
                     --instance-id "${instance_id}" \
@@ -67,6 +71,10 @@ jobs:
                     --output text)"
                 if [[ "${status}" != "InProgress" ]]; then
                     break
+                fi
+                if [ "${cnt}" -eq 10 ]; then
+                    echo "Command \"${cmd}\"  never ends"
+                    exit 42
                 fi
                 sleep 1
             done
@@ -94,7 +102,7 @@ jobs:
                 "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
               }
             ]
-          }' ${{ secrets. DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
+          }' ${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
         }
 
         while read -r instance_id; do
@@ -108,9 +116,10 @@ jobs:
             sleep 5
 
             result="docker service ls"
-            exec_cmd "${result}" "${instance_id}"
+            exec_cmd "${result}" "${instance_id}" >> result.txt
 
-            send_discord_notification
+            # there is only one running vm, so no worries
+            break
         done < <(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
