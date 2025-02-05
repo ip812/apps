@@ -43,6 +43,9 @@ services:
     environment:
       DD_API_KEY: "70157b6a8877fa51c608d22f27315278"
       DD_SITE: "datadoghq.eu"
+      DD_LOGS_ENABLED: "true"
+      DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: "true"
+      DD_CONTAINER_EXCLUDE_LOGS: "name:datadog-agent"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro
