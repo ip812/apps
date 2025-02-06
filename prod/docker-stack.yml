@@ -41,7 +41,7 @@ services:
       replicas: 1
 
   blog:
-    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/blog:0.17.0
+    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/blog:0.18.0
     secrets:
       - blog_domain
       - blog_port
