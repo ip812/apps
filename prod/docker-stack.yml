@@ -20,17 +20,17 @@ services:
       - "--entryPoints.web.address=:80"
       - "--experimental.plugins.cloudflarewarp.modulename=github.com/BetterCorp/cloudflarewarp"
       - "--experimental.plugins.cloudflarewarp.version=v1.3.3"
-      - "--providers.file.directory=/etc/traefik"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.middlewares.my-cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
+      - "traefik.http.middlewares.my-cloudflarewarp.plugin.cloudflarewarp.trustip.0=2400:cb00::/32"
     ports:
       - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/etc/traefik/dynamic-config:/etc/traefik:ro"
 
     networks:
       - ip812_network
