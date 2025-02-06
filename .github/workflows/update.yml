@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [update-image]
 
+env:
+  IMAGE_NAME: ${{ github.event.image_name }}
+  TAG: ${{ github.event.tag }}
+
 jobs:
   update-image:
     runs-on: ubuntu-latest
@@ -13,14 +17,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Parse event payload
-      id: parse
-      run: |
-        echo "IMAGE_NAME=${{ github.event.image_name }}" >> $GITHUB_ENV
-        echo "TAG=${{ github.event.tag }}" >> $GITHUB_ENV
-        echo "IMAGE_NAME=${{ env.IMAGE_NAME }}"
-        echo "TAG=${{ env.TAG }}"
 
     - name: Update Docker image in compose file
       run: |
