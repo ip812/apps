@@ -31,7 +31,8 @@ services:
       - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/etc/traefik/dynamic-config:/etc/traefik/dynamic-config"
+      - "/etc/traefik/dynamic-config:/etc/traefik/dynamic-config:ro"
+
     networks:
       - ip812_network
     deploy:
