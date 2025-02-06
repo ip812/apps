@@ -41,7 +41,7 @@ services:
       replicas: 1
 
   blog:
-    image: iypetrov/go-indie-hacking-starter:0.10.4
+    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/blog:0.3.0
     secrets:
       - blog_domain
       - blog_port
