@@ -118,8 +118,8 @@ jobs:
             result="docker service ls"
             exec_cmd "${result}" "${instance_id}" >> result.txt
 
-            # there is only one running vm, so no worries
-            break
+            # TODO: use the result.txt to determine what message to send to discord
+            send_discord_notification
         done < <(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
