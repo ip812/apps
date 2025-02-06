@@ -5,8 +5,8 @@ on:
     types: [update-image]
 
 env:
-  IMAGE_NAME: ${{ github.event.image_name }}
-  TAG: ${{ github.event.tag }}
+  IMAGE_NAME: ${{ github.event.client_payload.image_name }}
+  TAG: ${{ github.event.client_payload.tag }}
 
 jobs:
   update-image:
