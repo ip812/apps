@@ -17,8 +17,8 @@ jobs:
     - name: Parse event payload
       id: parse
       run: |
-        echo "IMAGE_NAME=${{ github.event.client_payload.image_name }}" >> $GITHUB_ENV
-        echo "TAG=${{ github.event.client_payload.tag }}" >> $GITHUB_ENV
+        echo "IMAGE_NAME=${{ github.event.image_name }}" >> $GITHUB_ENV
+        echo "TAG=${{ github.event.tag }}" >> $GITHUB_ENV
         echo "IMAGE_NAME=${{ env.IMAGE_NAME }}"
         echo "TAG=${{ env.TAG }}"
 
