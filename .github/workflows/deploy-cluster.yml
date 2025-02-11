@@ -30,7 +30,7 @@ jobs:
             CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
             curl -H \\\"Authorization: token ${{ secrets.GITHUB_ACCESS_TOKEN }}\\\" \
             -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
-            docker stack deploy -c - ip812 --with-registry-auth" INSTANCE_ID="${instace_id}" \
+            docker stack deploy -c - ip812 --with-registry-auth" INSTANCE_ID="${instance_id}" \
             .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
 
             sleep 5
