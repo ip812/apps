@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CMD=$1
 INSTACE_ID=$2
 
