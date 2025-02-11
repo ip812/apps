@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "${AWS_REGION}" 
+echo "${CMD}" 
+echo "${INSTANCE_ID}" 
+
 cmd_id="$(aws ssm send-command \
     --region "${AWS_REGION}" \
     --document-name "AWS-RunShellScript" \
