@@ -8,18 +8,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-cluster:
     runs-on: ubuntu-latest
 
     permissions:
         contents: read
         packages: write
 
+    outputs:
+      deploy_result: ${{ steps.deploy.outputs.result }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Update service
+    - name: Deploy cluster 
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -36,7 +39,7 @@ jobs:
             sleep 5
 
             CMD="docker service ls" INSTANCE_ID="${instance_id}" \
-            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
+            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh >> "$GITHUB_OUTPUT"
         done < <(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
@@ -44,3 +47,18 @@ jobs:
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
 
+  discord-notification:
+    runs-on: ubuntu-latest
+    needs: deploy-cluster
+
+    permissions:
+        contents: read
+        packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Send notification to Discord's deployment channel 
+      run: |
+        echo ${{ needs.deploy-cluster.outputs.deploy_result }}
