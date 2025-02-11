@@ -38,14 +38,16 @@ jobs:
 
             sleep 5
 
-            CMD="docker service ls" INSTANCE_ID="${instance_id}" \
-            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh >> "$GITHUB_OUTPUT"
+            CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" INSTANCE_ID="${instance_id}" \
+            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh | tee result.txt
           done < <(aws ec2 describe-instances \
               --region "${AWS_REGION}" \
               --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
               --filters "Name=instance-state-name,Values=running" \
               --query "Reservations[].Instances[].InstanceId" \
               --output json | jq -r '.[]' | head -n 1)
+
+          echo "result=$(cat result.txt | base64 -w0)" >> "$GITHUB_ENV"
 
   discord-notification:
     runs-on: ubuntu-latest
@@ -54,5 +56,5 @@ jobs:
     steps:
       - name: Send notification to Discord
         run: |
-          echo ${{ needs.deploy-cluster.outputs.deploy_result }}
+          echo ${{ needs.deploy-cluster.outputs.result }}
 
