@@ -1,0 +1,46 @@
+---
+name: Deploy cluster
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+        contents: read
+        packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Update service
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        DISCORD_DEPLOYMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+      run: |
+        while read -r instance_id; do
+            CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
+            curl -H \\\"Authorization: token ${{ secrets.GITHUB_ACCESS_TOKEN }}\\\" \
+            -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
+            docker stack deploy -c - ip812 --with-registry-auth" INSTANCE_ID="${instace_id}" \
+            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
+
+            sleep 5
+
+            CMD="docker service ls" INSTANCE_ID="${instace_id}" \
+            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
+        done < <(aws ec2 describe-instances \
+            --region "${AWS_REGION}" \
+            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
+            --filters "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output json | jq -r '.[]')
+
