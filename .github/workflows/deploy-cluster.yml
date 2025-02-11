@@ -56,5 +56,5 @@ jobs:
     steps:
       - name: Send notification to Discord
         run: |
-          echo ${{ needs.deploy-cluster.outputs.result }}
+          echo ${{ needs.deploy-cluster.deploy.outputs.result }}
 
