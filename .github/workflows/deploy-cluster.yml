@@ -16,7 +16,7 @@ jobs:
       packages: write
 
     outputs:
-      deploy_result: ${{ steps.deploy.outputs.result }}
+      result: ${{ steps.deploy.outputs.result }}
 
     steps:
       - name: Checkout code
