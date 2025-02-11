@@ -7,10 +7,12 @@ CMD_ID="$(aws ssm send-command \
     --parameters "commands=[\"${CMD}\"]" \
     --query 'Command.CommandId' \
     --output text)"
+echo "AWS command id: ${CMD_ID}"
 
 CNT=0
 while true; do
     CNT=$((CNT + 1))
+    echo "Try ${CNT} to get the command status"
     status="$(aws ssm get-command-invocation \
         --region "${AWS_REGION}" \
         --instance-id "${INSTANCE_ID}" \
