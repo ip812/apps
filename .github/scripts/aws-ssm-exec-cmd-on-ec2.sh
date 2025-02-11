@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CMD=$1
+INSTACE_ID=$2
+
 CMD_ID="$(aws ssm send-command \
     --region "${AWS_REGION}" \
     --document-name "AWS-RunShellScript" \

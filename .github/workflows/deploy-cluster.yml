@@ -33,13 +33,15 @@ jobs:
             --output json | jq -r '.[]' | head -n 1)
           echo "HA instace id: ${instance_id}"
 
-          echo "export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth"
-          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth" INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
-          
+          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth" 
+          INSTANCE_ID="${instance_id}" 
+          .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
 
           sleep 10
 
-          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh > deploy_cluster_result.txt
+          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" 
+          INSTANCE_ID="${instance_id}" 
+          .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
 
       - name: Upload result artfifact for "Deploy cluster"
         uses: actions/upload-artifact@v4
