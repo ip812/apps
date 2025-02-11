@@ -62,18 +62,6 @@ services:
       mode: replicated
       replicas: 1
 
-  # blog_litestream:
-  #   image: litestream/litestream:0.3.13
-  #   command: ["replicate"]
-  #   volumes:
-  #     - blog_db:/data:ro
-  #     - /etc/litestream:/etc/litestream:ro
-  #   networks:
-  #     - ip812_network
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-
 secrets:
   blog_domain:
     external: true
