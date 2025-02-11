@@ -54,7 +54,12 @@ jobs:
     needs: deploy-cluster
 
     steps:
-      - name: Send notification to Discord
+      - name: Decode and Send Notification to Discord
+        env:
+          SERVICE_STATUS: ${{ needs.deploy-cluster.outputs.service_status }}
         run: |
-          echo ${{ needs.deploy-cluster.deploy.outputs.result }}
+          # Decode the base64-encoded service status
+          decoded_status=$(echo "$SERVICE_STATUS" | base64 -d)
+          echo "Service Status:"
+          echo "$decoded_status"
 
