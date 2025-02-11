@@ -24,8 +24,8 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
-        DISCORD_DEPLOYMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
       run: |
+        # There is only 1 running instance
         while read -r instance_id; do
             CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
             curl -H \\\"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\\\" \
@@ -42,5 +42,5 @@ jobs:
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
             --filters "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
-            --output json | jq -r '.[]')
+            --output json | jq -r '.[]' | head -n 1)
 
