@@ -10,49 +10,57 @@ on:
 jobs:
   deploy-cluster:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
-    outputs:
-      result: ${{ steps.deploy_step.outputs.result }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Deploy cluster
-        id: deploy_step  
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
+          # There is 1 HA instance
           instance_id=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
-            "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
 
           CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
             curl -H \"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\" \
             -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
-            docker stack deploy -c - ip812 --with-registry-auth" 
-          INSTANCE_ID="${instance_id}" \
-            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
+            docker stack deploy -c - ip812 --with-registry-auth" \
+          INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
 
-          sleep 5
+          sleep 10
 
-          result=$(CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" \
-            INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh | base64 -w0)
-          
-          echo "result=$result" >> "$GITHUB_OUTPUT"
+          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" \
+          INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh > deploy_cluster_result.txt
+          - name: Upload File
+
+      - name: Upload result artfifact for "Deploy cluster"
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-cluster-result
+          path : deploy_cluster_result.txt
 
   discord-notification:
     runs-on: ubuntu-latest
     needs: deploy-cluster
+
     steps:
+      - name: Download result artfifact for "Deploy cluster"
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-cluster-result
+
       - name: Decode and Send Notification to Discord
         run: |
-          echo ${{ needs.deploy-cluster.outputs.result }} | base64 -d
+          cat deploy_cluster_result.txt
 
