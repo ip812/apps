@@ -16,14 +16,13 @@ jobs:
       packages: write
 
     outputs:
-      result: ${{ steps.deploy.outputs.result }}
+      result: ${{ steps.set_output.outputs.result }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Deploy cluster
-        id: deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -39,9 +38,9 @@ jobs:
 
             sleep 5
 
-            result="$(CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" INSTANCE_ID="${instance_id}" \
-            .github/scripts/aws-ssm-exec-cmd-on-ec2.sh | base64 -w0)"
-            echo "deploy-cluster-result=${result}" >> "$GITHUB_OUTPUT"
+            result="$(CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" \
+            INSTANCE_ID="${instance_id}" .github/scripts/aws-ssm-exec-cmd-on-ec2.sh)"
+            echo "result=${result}" >> "$GITHUB_OUTPUT"
           done < <(aws ec2 describe-instances \
               --region "${AWS_REGION}" \
               --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
