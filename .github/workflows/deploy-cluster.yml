@@ -35,7 +35,7 @@ jobs:
 
             sleep 5
 
-            CMD="docker service ls" INSTANCE_ID="${instace_id}" \
+            CMD="docker service ls" INSTANCE_ID="${instance_id}" \
             .github/scripts/aws-ssm-exec-cmd-on-ec2.sh
         done < <(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
