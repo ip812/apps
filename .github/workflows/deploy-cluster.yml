@@ -56,7 +56,5 @@ jobs:
     steps:
       - name: Decode and Send Notification to Discord
         run: |
-          decoded_status="$(echo ${{ needs.deploy-cluster.outputs.result }} | base64 -d)"
-          echo "Service Status:"
-          echo "$decoded_status"
+          echo ${{ needs.deploy-cluster.outputs.result }}
 
