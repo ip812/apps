@@ -47,7 +47,7 @@ jobs:
               --query "Reservations[].Instances[].InstanceId" \
               --output json | jq -r '.[]' | head -n 1)
 
-          echo "result=$(cat result.txt | base64 -w0)" >> "$GITHUB_ENV"
+          echo "result=$(cat result.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
   discord-notification:
     runs-on: ubuntu-latest
