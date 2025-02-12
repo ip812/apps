@@ -3,7 +3,7 @@
 TITLE=$1
 DESCRIPTION=$2
 STATUS=$3
-declare -n FIELDS=$4
+FIELDS=$4
 DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
 
 if [[ "${STATUS}" = "success" ]]; then
@@ -12,11 +12,13 @@ else
     COLOR=15158332 # Red
 fi
 
-FIELDS_JSON=""
-for KEY in "${!FIELDS[@]}"; do
-  FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${FIELDS[${KEY}]}\", \"inline\": true},"
-done
-FIELDS_JSON="${FIELDS_JSON%,}"
+echo "${FIELDS}"
+
+# FIELDS_JSON=""
+# for KEY in "${!FIELDS[@]}"; do
+#   FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${FIELDS[${KEY}]}\", \"inline\": true},"
+# done
+# FIELDS_JSON="${FIELDS_JSON%,}"
 
 JSON_PAYLOAD=$(cat <<EOF
 {
