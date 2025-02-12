@@ -12,7 +12,7 @@ else
     COLOR=15158332 # Red
 fi
 
-FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: true}' | jq -s -c .)
+FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: false}' | jq -s -c .)
 JSON_PAYLOAD=$(cat <<EOF
 {
   "embeds": [
@@ -31,4 +31,11 @@ EOF
 echo "${JSON_PAYLOAD}"
 
 curl -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+
+if [[ $? -eq 0 ]]; then
+  echo "Notification sent successfully."
+else
+  echo "Failed to send notification."
+  exit 1
+fi
 
