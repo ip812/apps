@@ -12,16 +12,12 @@ else
     COLOR=15158332 # Red
 fi
 
-for KEY in "${!FIELDS[@]}"; do
-  echo "${KEY}"
-  echo "${FIELDS[${KEY}]}"
-done
-
-# FIELDS_JSON=""
-# for KEY in "${!FIELDS[@]}"; do
-#   FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${FIELDS[${KEY}]}\", \"inline\": true},"
-# done
-# FIELDS_JSON="${FIELDS_JSON%,}"
+FIELDS_JSON=""
+while read FIELD; do
+    KEY="$(echo "${FIELD}" | cut -d '=' -f 1)" 
+    VALUE="$(echo "${FIELD}" | cut -d '=' -f 2)" 
+    FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${VALUE}\", \"inline\": true},"
+done < <(echo "${FIELDS}" | tr ',' '\n')
 
 JSON_PAYLOAD=$(cat <<EOF
 {
