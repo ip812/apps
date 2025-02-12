@@ -48,7 +48,7 @@ jobs:
 
           sleep 10
 
-          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'"
+          CMD="docker service ls --format '{{.Image}} {{.Replicas}}'"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
 
       - name: Upload result artifact for "Deploy cluster"
