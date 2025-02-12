@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 CMD=$1
 INSTANCE_ID=$2  
 
@@ -9,8 +7,6 @@ if [[ -z "${INSTANCE_ID}" ]]; then
     echo "Error: INSTANCE_ID is empty. Exiting."
     exit 1
 fi
-
-echo "Executing command on instance: ${INSTANCE_ID}"
 
 CMD_ID="$(aws ssm send-command \
     --region "${AWS_REGION}" \
@@ -25,21 +21,18 @@ if [[ -z "${CMD_ID}" ]]; then
     exit 1
 fi
 
-echo "AWS command ID: ${CMD_ID}"
-
 CNT=0
 while true; do
     CNT=$((CNT + 1))
-    echo "Attempt ${CNT} to get the command status"
     
-    status="$(aws ssm get-command-invocation \
+    STATUS="$(aws ssm get-command-invocation \
         --region "${AWS_REGION}" \
         --instance-id "${INSTANCE_ID}" \
         --command-id "${CMD_ID}" \
         --query 'Status' \
         --output text)"
     
-    if [[ "${status}" != "InProgress" ]]; then
+    if [[ "${STATUS}" != "InProgress" ]]; then
         break
     fi
 

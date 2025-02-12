@@ -1,18 +1,37 @@
 #!/bin/bash
 
-curl -H "Content-Type: application/json" -X POST -d '{
+TITLE=$1
+DESCRIPTION=$2
+STATUS=$3
+FIELDS=$4
+DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
+
+if [[ "${STATUS}" = "success" ]];
+    COLOR=3066993 # Green
+elif
+    COLOR=15158332 # Red
+fi
+
+FIELDS_JSON=""
+for KEY in "${!FIELDS[@]}"; do
+  FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${FIELDS[${KEY}]}\", \"inline\": true},"
+done
+FIELDS_JSON="${FIELDS_JSON%,}"
+
+JSON_PAYLOAD=$(cat <<EOF
+{
   "embeds": [
     {
-      "title": "'${TITLE}'",
-      "description": "'${DESCRIPTION}'",
+      "title": "${TITLE}",
+      "description": "${DESCRIPTION}",
       "color": '${COLOR}',
-      "fields": [
-        {"name": "Image name", "value": "'${IMAGE_NAME}'", "inline": true},
-        {"name": "Tag", "value": "'${TAG}'", "inline": true}
-        {"name": "Environment", "value": "'${ENV}'", "inline": true}
-      ],
-      "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+      "fields": ["${FIELDS_JSON}"],
+      "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
-}' ${DISCORD_DEPLOYMENTS_WEBHOOK_URL}
+}
+EOF
+)
+
+curl -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
 

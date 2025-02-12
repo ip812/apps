@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy-cluster:
+    if: github.actor != 'specific-user'
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,7 +26,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          # Fetch the EC2 instance ID
+          set -e 
+
           INSTANCE_ID=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
@@ -39,13 +41,13 @@ jobs:
 
           echo "HA instance ID: ${INSTANCE_ID}"
 
-          # Deploy stack
-          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth"
+          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
+               curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
+               docker stack deploy -c - ip812 --with-registry-auth"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
 
           sleep 10
 
-          # Check deployed services
           CMD="docker service ls --format '{{.Name}} {{.Replicas}}'"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
 
@@ -65,13 +67,27 @@ jobs:
         with:
           name: deploy-cluster-result
 
-      - name: Send notification to Discord
+      - name: Send notification to Discord's deployments channel
         run: |
+          set -e
+
           while read LINE; do
             IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1)" 
             REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
-            echo "${IMAGE}"
-            echo "${REPLICAS}"
+            echo "Image: ${IMAGE}"
+            echo "Replicas: ${REPLICAS}"
+            if [[ REPLICASE == "1/1" ]]; then 
+              TITLE="Cluster deployment status"
+              DESCRIPTION="The cluster deployment was successful.  🚀"
+              STATUS="success"
+              FIELDS=$4
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
+            elif
+              TITLE="Cluster deployment status"
+              DESCRIPTION="The cluster deployment was successful.  ❌"
+              STATUS="success"
+              FIELDS=$4
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
+            fi
           done < <(cat deploy_cluster_result.txt)
-          echo "-----"
-          cat deploy_cluster_result.txt
+
