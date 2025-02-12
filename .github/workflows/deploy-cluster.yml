@@ -25,34 +25,42 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          # There is 1 HA instance
+          # Fetch the EC2 instance ID
           INSTANCE_ID=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
-          echo "HA instace id: ${INSTANCE_ID}"
 
-          CMD="export IP812_TUNNEL_TOKEN=\${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \\\"Authorization: token \${{ secrets.GH_ACCESS_TOKEN }}\\\" -s https://raw.githubusercontent.com/\${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth"
+          if [[ -z "${INSTANCE_ID}" ]]; then
+            echo "Error: No instance found matching the given filters."
+            exit 1
+          fi
+
+          echo "HA instance ID: ${INSTANCE_ID}"
+
+          # Deploy stack
+          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
 
           sleep 10
 
-          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" 
+          # Check deployed services
+          CMD="docker service ls --format '{{.Name}} {{.Replicas}}'"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
 
-      - name: Upload result artfifact for "Deploy cluster"
+      - name: Upload result artifact for "Deploy cluster"
         uses: actions/upload-artifact@v4
         with:
           name: deploy-cluster-result
-          path : deploy_cluster_result.txt
+          path: deploy_cluster_result.txt
 
   discord-notification:
     runs-on: ubuntu-latest
     needs: deploy-cluster
 
     steps:
-      - name: Download result artfifact for "Deploy cluster"
+      - name: Download result artifact for "Deploy cluster"
         uses: actions/download-artifact@v4
         with:
           name: deploy-cluster-result
