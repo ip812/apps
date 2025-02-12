@@ -12,7 +12,10 @@ else
     COLOR=15158332 # Red
 fi
 
-echo "${FIELDS}"
+for KEY in "${!FIELDS[@]}"; do
+  echo "${KEY}"
+  echo "${FIELDS[${KEY}]}"
+done
 
 # FIELDS_JSON=""
 # for KEY in "${!FIELDS[@]}"; do
