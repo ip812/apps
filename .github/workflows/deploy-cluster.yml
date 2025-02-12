@@ -88,7 +88,7 @@ jobs:
               )
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-            elif
+            else
               TITLE="Cluster deployment status"
               DESCRIPTION="The cluster deployment was successful.  ❌"
               STATUS="failure"
