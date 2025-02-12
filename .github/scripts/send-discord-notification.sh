@@ -33,5 +33,7 @@ JSON_PAYLOAD=$(cat <<EOF
 EOF
 )
 
+echo "${JSON_PAYLOAD}"
+
 curl -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
 
