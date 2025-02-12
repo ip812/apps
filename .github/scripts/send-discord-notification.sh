@@ -8,7 +8,7 @@ DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
 
 if [[ "${STATUS}" = "success" ]];
     COLOR=3066993 # Green
-elif
+else
     COLOR=15158332 # Red
 fi
 
