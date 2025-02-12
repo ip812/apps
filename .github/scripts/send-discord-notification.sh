@@ -12,12 +12,7 @@ else
     COLOR=15158332 # Red
 fi
 
-FIELDS_JSON=""
-while read FIELD; do
-    KEY="$(echo "${FIELD}" | cut -d '=' -f 1)" 
-    VALUE="$(echo "${FIELD}" | cut -d '=' -f 2)" 
-    FIELDS_JSON+="{\"name\": \"${KEY}\", \"value\": \"${VALUE}\", \"inline\": true},"
-done < <(echo "${FIELDS}" | tr ',' '\n')
+FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: true}' | jq -s .)
 
 JSON_PAYLOAD=$(cat <<EOF
 {
