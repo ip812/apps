@@ -67,5 +67,10 @@ jobs:
 
       - name: Send notification to Discord
         run: |
-          cat deploy_cluster_result.txt
+          while read LINE; do
+            IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1)" 
+            REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
+            echo "${IMAGE}"
+            echo "${REPLICAS}"
+          done < <(cat deploy_cluster_result.txt)
 
