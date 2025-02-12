@@ -50,6 +50,7 @@ jobs:
 
           CMD="docker service ls --format '{{.Name}} {{.Replicas}}'"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
+          sed '/^$/d' deploy_cluster_result.txt
 
       - name: Upload result artifact for "Deploy cluster"
         uses: actions/upload-artifact@v4
