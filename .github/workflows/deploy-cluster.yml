@@ -26,21 +26,19 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           # There is 1 HA instance
-          instance_id=$(aws ec2 describe-instances \
+          INSTANCE_ID=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
             --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
-          echo "HA instace id: ${instance_id}"
+          echo "HA instace id: ${INSTANCE_ID}"
 
-          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \"Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}\" -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth" 
-          INSTANCE_ID="${instance_id}" 
+          CMD="export IP812_TUNNEL_TOKEN=\${{ secrets.IP812_TUNNEL_TOKEN }} && curl -H \\\"Authorization: token \${{ secrets.GH_ACCESS_TOKEN }}\\\" -s https://raw.githubusercontent.com/\${{ github.repository }}/main/prod/docker-stack.yml | docker stack deploy -c - ip812 --with-registry-auth"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
 
           sleep 10
 
           CMD="docker service ls --format '{{.Name}} {{.Replicas}}'" 
-          INSTANCE_ID="${instance_id}" 
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_cluster_result.txt
 
       - name: Upload result artfifact for "Deploy cluster"
