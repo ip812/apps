@@ -21,7 +21,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
       "fields": ${FIELDS_JSON},
-      "footer: {
+      "footer": {
           text: "Deployer",
           icon_url: "https://avatars.githubusercontent.com/u/187394964"
       },
