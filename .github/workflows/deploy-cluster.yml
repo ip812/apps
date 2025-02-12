@@ -96,7 +96,7 @@ jobs:
               TITLE="Cluster deployment status"
               DESCRIPTION="The cluster deployment **failed**. ❌"
               STATUS="failure"
-              FIELDS="Image=${IMAGE},Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              FIELDS="Image=${IMAGE},Environment=${ENV},Commit=[View Commit](${COMMIT_LINK}),Action=[View Pipeline](${ACTION_LINK})"
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             fi
