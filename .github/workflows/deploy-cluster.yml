@@ -72,6 +72,7 @@ jobs:
           set -e
 
           while read LINE; do
+            ENV="prod"
             IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1)" 
             REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
             echo "Image: ${IMAGE}"
@@ -81,12 +82,18 @@ jobs:
               DESCRIPTION="The cluster deployment was successful.  🚀"
               STATUS="success"
               FIELDS=$4
+              declare -A FIELDS=(
+                ["Image"]="$IMAGE"
+                ["Environment"]="$ENV"
+              )
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
             elif
               TITLE="Cluster deployment status"
               DESCRIPTION="The cluster deployment was successful.  ❌"
               STATUS="success"
               FIELDS=$4
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
             fi
           done < <(cat deploy_cluster_result.txt)
