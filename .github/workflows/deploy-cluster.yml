@@ -73,4 +73,5 @@ jobs:
             echo "${IMAGE}"
             echo "${REPLICAS}"
           done < <(cat deploy_cluster_result.txt)
-
+          echo "-----"
+          cat deploy_cluster_result.txt
