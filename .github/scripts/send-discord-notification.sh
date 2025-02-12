@@ -3,7 +3,7 @@
 TITLE=$1
 DESCRIPTION=$2
 STATUS=$3
-FIELDS=$4
+declare -n FIELDS=$4
 DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
 
 if [[ "${STATUS}" = "success" ]]; then
@@ -24,8 +24,8 @@ JSON_PAYLOAD=$(cat <<EOF
     {
       "title": "${TITLE}",
       "description": "${DESCRIPTION}",
-      "color": '${COLOR}',
-      "fields": ["${FIELDS_JSON}"],
+      "color": ${COLOR},
+      "fields": [${FIELDS_JSON}],
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
