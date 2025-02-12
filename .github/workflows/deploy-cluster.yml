@@ -77,24 +77,27 @@ jobs:
             REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
             echo "Image: ${IMAGE}"
             echo "Replicas: ${REPLICAS}"
+
             if [[ REPLICASE == "1/1" ]]; then 
               TITLE="Cluster deployment status"
               DESCRIPTION="The cluster deployment was successful.  🚀"
               STATUS="success"
-              FIELDS=$4
               declare -A FIELDS=(
                 ["Image"]="$IMAGE"
                 ["Environment"]="$ENV"
               )
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
-              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             elif
               TITLE="Cluster deployment status"
               DESCRIPTION="The cluster deployment was successful.  ❌"
-              STATUS="success"
-              FIELDS=$4
+              STATUS="failure"
+              declare -A FIELDS=(
+                ["Image"]="$IMAGE"
+                ["Environment"]="$ENV"
+              )
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL}}
-              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}"
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             fi
           done < <(cat deploy_cluster_result.txt)
 
