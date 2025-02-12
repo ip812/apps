@@ -6,7 +6,7 @@ STATUS=$3
 FIELDS=$4
 DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
 
-if [[ "${STATUS}" = "success" ]];
+if [[ "${STATUS}" = "success" ]]; then
     COLOR=3066993 # Green
 else
     COLOR=15158332 # Red
