@@ -62,6 +62,9 @@ jobs:
     needs: deploy-cluster
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Download result artifact for "Deploy cluster"
         uses: actions/download-artifact@v4
         with:
@@ -80,7 +83,7 @@ jobs:
 
             if [[ REPLICASE == "1/1" ]]; then 
               TITLE="Cluster deployment status"
-              DESCRIPTION="The cluster deployment was successful.  🚀"
+              DESCRIPTION="The cluster deployment was **successful**.  🚀"
               STATUS="success"
               declare -A FIELDS=(
                 ["Image"]="$IMAGE"
@@ -90,7 +93,7 @@ jobs:
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             else
               TITLE="Cluster deployment status"
-              DESCRIPTION="The cluster deployment was successful.  ❌"
+              DESCRIPTION="The cluster deployment **failed**. ❌"
               STATUS="failure"
               declare -A FIELDS=(
                 ["Image"]="$IMAGE"
