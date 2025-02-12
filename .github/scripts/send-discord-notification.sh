@@ -12,8 +12,7 @@ else
     COLOR=15158332 # Red
 fi
 
-FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: true}' | jq -s .)
-
+FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: true}' | jq -s -c .)
 JSON_PAYLOAD=$(cat <<EOF
 {
   "embeds": [
@@ -21,7 +20,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "title": "${TITLE}",
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
-      "fields": [${FIELDS_JSON}],
+      "fields": ${FIELDS_JSON},
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
