@@ -21,7 +21,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
       "fields": ${FIELDS_JSON},
-      "footer": {text:"Deployer",icon_url:"https://avatars.githubusercontent.com/u/187394964"},
+      "footer": {"text":"Deployer","icon_url":"https://avatars.githubusercontent.com/u/187394964"},
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
@@ -31,7 +31,7 @@ EOF
 
 echo "${JSON_PAYLOAD}"
 
-curl -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
 
 if [[ $? -eq 0 ]]; then
   echo "Notification sent successfully."
