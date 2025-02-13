@@ -41,7 +41,7 @@ jobs:
 
           echo "HA instance ID: ${INSTANCE_ID}"
 
-          CMD="export IP812_TUNNEL_TOKEN=${{ secrets.IP812_TUNNEL_TOKEN }} && \
+          CMD="export CF_TUNNEL_TOKEN=${{ secrets.CF_TUNNEL_TOKEN }} && \
                curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
                docker stack deploy -c - ip812 --with-registry-auth"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
