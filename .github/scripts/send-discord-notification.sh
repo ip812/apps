@@ -21,7 +21,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
       "fields": ${FIELDS_JSON},
-      "footer": {"text":"Deployer","icon_url":"https://avatars.githubusercontent.com/u/187394964"},
+      "footer": {text:"Deployer",icon_url:"https://avatars.githubusercontent.com/u/187394964"},
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
@@ -31,7 +31,7 @@ EOF
 JSON_PAYLOAD=$(echo "$JSON_PAYLOAD" | jq '.embeds[0].fields |= map(if .name == "Image" or .name == "Environment" then .inline = true else . end)')
 echo "${JSON_PAYLOAD}"
 
-response=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" http://localhost:8080)
+response=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" "$DISCORD_DEPLOYMENTS_WEBHOOK_URL")
 if [[ "$response" != "204" ]]; then
   echo "Failed to send notification. HTTP response: $response"
   exit 1
