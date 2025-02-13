@@ -28,15 +28,14 @@ JSON_PAYLOAD=$(cat <<EOF
 }
 EOF
 )
-
+JSON_PAYLOAD=$(echo "$JSON_PAYLOAD" | jq '.embeds[0].fields |= map(if .name == "Image" or .name == "Environment" then .inline = true else . end)')
 echo "${JSON_PAYLOAD}"
 
-curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -X POST -d "${JSON_PAYLOAD}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-
-if [[ $? -eq 0 ]]; then
-  echo "Notification sent successfully."
-else
-  echo "Failed to send notification."
+response=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" "$DISCORD_DEPLOYMENTS_WEBHOOK_URL")
+if [[ "$response" != "204" ]]; then
+  echo "Failed to send notification. HTTP response: $response"
   exit 1
+else
+  echo "Notification sent successfully."
 fi
 
