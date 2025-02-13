@@ -22,6 +22,7 @@ jobs:
 
       - name: Deploy cluster
         env:
+          ORG: ${{ secrets.ORG }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -30,7 +31,7 @@ jobs:
 
           INSTANCE_ID=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
-            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=ip812" \
+            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=${ORG}" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
 
@@ -43,7 +44,7 @@ jobs:
 
           CMD="export CF_TUNNEL_TOKEN=${{ secrets.CF_TUNNEL_TOKEN }} && \
                curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
-               docker stack deploy -c - ip812 --with-registry-auth"
+               docker stack deploy -c - ${{ secrets.ORG }} --with-registry-auth"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}"
 
           sleep 10

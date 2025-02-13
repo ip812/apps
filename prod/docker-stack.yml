@@ -4,7 +4,7 @@ services:
     image: cloudflare/cloudflared:2025.1.0
     command: tunnel run
     environment:
-      - TUNNEL_TOKEN=${IP812_TUNNEL_TOKEN}
+      - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
     networks:
       - ip812_network
     deploy:
@@ -25,8 +25,8 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`traefik.ip812.com`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.entrypoints=web"
-      - "traefik.http.middlewares.my-cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
-      - "traefik.http.middlewares.my-cloudflarewarp.plugin.cloudflarewarp.trustip.0=2400:cb00::/32"
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.trustip.0=2400:cb00::/32"
     ports:
       - "80:80"
     volumes:
@@ -83,3 +83,4 @@ networks:
   ip812_network:
     driver: overlay
     attachable: true
+
