@@ -21,7 +21,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
       "fields": ${FIELDS_JSON},
-      "footer": {text:"Deployer",icon_url:"https://avatars.githubusercontent.com/u/187394964"},
+      "footer": {"text":"Deployer","icon_url":"https://avatars.githubusercontent.com/u/187394964"},
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
