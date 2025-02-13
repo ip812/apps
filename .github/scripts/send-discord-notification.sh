@@ -8,8 +8,10 @@ DISCORD_DEPLOYMENTS_WEBHOOK_URL=$5
 
 if [[ "${STATUS}" = "success" ]]; then
     COLOR=3066993 # Green
+    ICON="🚀"
 else
     COLOR=15158332 # Red
+    ICON="❌"
 fi
 
 FIELDS_JSON=$(echo "$FIELDS" | tr ',' '\n' | jq -R 'split("=") | {name: .[0], value: .[1], inline: false}' | jq -s -c .)
@@ -21,7 +23,7 @@ JSON_PAYLOAD=$(cat <<EOF
       "description": "${DESCRIPTION}",
       "color": ${COLOR},
       "fields": ${FIELDS_JSON},
-      "footer": {"text":"Deployer","icon_url":"https://avatars.githubusercontent.com/u/187394964"},
+      "footer": {"text":"${ICON}"},
       "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
   ]
