@@ -31,7 +31,7 @@ EOF
 JSON_PAYLOAD=$(echo "$JSON_PAYLOAD" | jq '.embeds[0].fields |= map(if .name == "Image" or .name == "Environment" then .inline = true else . end)')
 echo "${JSON_PAYLOAD}"
 
-response=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" "$DISCORD_DEPLOYMENTS_WEBHOOK_URL")
+response=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" http://localhost:8080)
 if [[ "$response" != "204" ]]; then
   echo "Failed to send notification. HTTP response: $response"
   exit 1
