@@ -107,9 +107,10 @@ jobs:
 
           # Remove the ", " at the end
           if [[ -s "${RESULT}"  ]]; then
-              rev "${RESULT}" | cut -c3- | rev
+              cat "${RESULT}" | rev | cut -c3- | rev > "${RESULT}"
           fi
-          echo "Failing services: ${RESULT}" 
+          echo "Failing services:" 
+          cat "${RESULT}" 
 
           # Count the number of failing services
           CNT_FAILING_SERVICES=$(echo "${RESULT}" | tr -cd ',' | wc -c)
