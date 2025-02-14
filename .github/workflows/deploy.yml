@@ -132,7 +132,7 @@ jobs:
           CNT_FAILING_SERVICES=$(echo "${RESULT}" | tr -cd ',' | wc -c)
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
-          if [[ -s "${RESULT}"  ]]; then
+          if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
             TITLE="Deployment"
             DESCRIPTION="The deployment was **successful**."
             STATUS="success"
