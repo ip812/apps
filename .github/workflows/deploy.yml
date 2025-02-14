@@ -74,30 +74,32 @@ jobs:
           set -e
 
           ENV="prod"
+          COMMIT_LINK="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   
           CNT=0
           RESULT="$(mktemp)"
           while read LINE; do
             [[ -z "${LINE}" ]] && continue
+
             CNT=$((CNT + 1))
 
             IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1)" 
             REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2)" 
             echo "Image: ${IMAGE}"
             echo "Replicas: ${REPLICAS}"
-  
-                if [[ "${REPLICAS}" != "1/1" ]]; then 
-                    printf "${IMAGE}, " >> "${RESULT}"
-                fi
+
+            if [[ "${REPLICAS}" != "1/1" ]]; then 
+                printf "${IMAGE}, " >> "${RESULT}"
+            fi
           done < <(cat deploy_result.txt)
 
           # If there are 0 services to deploy, something went wrong
           if [[ ${CNT} -eq 0 ]]; then
-            TITLE="Recreating cluser"
+            TITLE="Deployment"
             DESCRIPTION="**0 services** are running after the deployment."
             STATUS="failure"
-            FIELDS="Environment=${ENV},Action=${ACTION_LINK}"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             exit 0
@@ -114,17 +116,17 @@ jobs:
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
           if [[ -s "${RESULT}"  ]]; then
-            TITLE="Recreating cluser"
+            TITLE="Deployment"
             DESCRIPTION="The deployment was **successful**."
             STATUS="success"
-            FIELDS="Environment=${ENV},Action=${ACTION_LINK}"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
           else
-            TITLE="Recreating cluser"
+            TITLE="Deployment"
             DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment."
             STATUS="failure"
-            FIELDS="Images=${RESULT},Environment=${ENV},Action=${ACTION_LINK}"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
           fi
