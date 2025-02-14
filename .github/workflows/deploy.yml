@@ -157,7 +157,7 @@ jobs:
               TITLE="Deployment"
               DESCRIPTION="${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed **successfully**."
               STATUS="success"
-              FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
+              FIELDS="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}" 
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
               echo "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed successfully"

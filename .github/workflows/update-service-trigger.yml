@@ -29,7 +29,7 @@ jobs:
           git config --global user.email 'deployer[bot]@users.noreply.${{ secrets.ORG }}.com'
           git remote set-url origin https://github-actions:${{ secrets.GH_ACCESS_TOKEN }}@github.com/${{ secrets.ORG }}/apps.git
           git add prod/docker-stack.yml
-          git commit -m "Update ${{ env.IMAGE_NAME }} to ${{ env.IMAGE_TAG }} version"
+          git commit -m "Update ${{ env.IMAGE_NAME }} to the latest tag ${{ env.IMAGE_TAG }}"
           git push origin main
 
       # This is required, because using GITHUB_TOKEN for repository interactions prevents triggering subsequent workflows
