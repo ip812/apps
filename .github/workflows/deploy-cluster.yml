@@ -9,7 +9,6 @@ on:
 
 jobs:
   deploy-cluster:
-    if: github.actor != 'specific-user'
     runs-on: ubuntu-latest
 
     permissions:
