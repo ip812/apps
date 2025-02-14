@@ -10,6 +10,18 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
   traefik:
     image: "traefik:v3.2"
@@ -39,6 +51,18 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
   blog:
     image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/blog:0.39.0
@@ -54,13 +78,32 @@ services:
       - "traefik.http.routers.blog.rule=Host(`deviliablog.com`)"
       - "traefik.http.routers.blog.entrypoints=web"
       - "traefik.http.services.blog.loadbalancer.server.port=8080"
+      - "traefik.http.services.blog.loadbalancer.healthcheck.path=/healthz"
+      - "traefik.http.services.blog.loadbalancer.healthcheck.interval=10s"
     volumes:
       - blog_db:/data
     networks:
       - ip812_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 1
+      update_config:
+        parallelism: 1      
+        delay: 10s          
+        order: start-first  
+        failure_action: rollback 
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first 
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
 secrets:
   blog_domain:
