@@ -1,11 +1,14 @@
 ---
-name: Init deploy 
+name: Deploy 
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  init-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     permissions:
@@ -16,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Init deploy
+      - name: Deploy
         env:
           ORG: ${{ secrets.ORG }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -35,7 +38,6 @@ jobs:
             echo "Error: No instance found matching the given filters."
             exit 1
           fi
-
           echo "HA instance ID: ${INSTANCE_ID}"
 
           CMD="export CF_TUNNEL_TOKEN=${{ secrets.CF_TUNNEL_TOKEN }} && \
@@ -46,26 +48,26 @@ jobs:
           sleep 10
 
           CMD="docker service ls --format '{{.Image}} {{.Replicas}}'"
-          .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > init_deploy_result.txt
+          .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_result.txt
 
-      - name: Upload result artifact for "Init deploy"
+      - name: Upload result artifact for "Deploy"
         uses: actions/upload-artifact@v4
         with:
-          name: init-deploy-result
-          path: init_deploy_result.txt
+          name: deploy-result
+          path: deploy_result.txt
 
   discord-notification:
     runs-on: ubuntu-latest
-    needs: init-deploy
+    needs: deploy
   
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
   
-      - name: Download result artifact for "Init deploy"
+      - name: Download result artifact for "Deploy"
         uses: actions/download-artifact@v4
         with:
-          name: init-deploy-result
+          name: deploy-result
   
       - name: Send notification to Discord's deployments channel
         run: |
@@ -85,15 +87,15 @@ jobs:
             echo "Image: ${IMAGE}"
             echo "Replicas: ${REPLICAS}"
   
-            if [[ "${REPLICAS}" != "1/1" ]]; then 
-                printf "${IMAGE}, " >> "${RESULT}"
-            fi
-          done < <(cat init_deploy_result.txt)
+                if [[ "${REPLICAS}" != "1/1" ]]; then 
+                    printf "${IMAGE}, " >> "${RESULT}"
+                fi
+          done < <(cat deploy_result.txt)
 
           # If there are 0 services to deploy, something went wrong
           if [[ ${CNT} -eq 0 ]]; then
             TITLE="Recreating cluser"
-            DESCRIPTION="**0 services** are running in the new cluster."
+            DESCRIPTION="**0 services** are running after the deployment."
             STATUS="failure"
             FIELDS="Environment=${ENV},Action=${ACTION_LINK}"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
@@ -126,4 +128,5 @@ jobs:
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
           fi
+
 
