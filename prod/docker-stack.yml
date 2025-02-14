@@ -65,7 +65,7 @@ services:
         max_attempts: 3
 
   blog:
-    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/blog:0.44.0
+    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/blog:0.45.0
     secrets:
       - blog_domain
       - blog_port
