@@ -26,7 +26,7 @@ jobs:
         run: |
           git config --global user.name 'deployer[bot]'
           git config --global user.email 'deployer[bot]@users.noreply.${ORG}.com'
-          git remote set-url origin https://github-actions:${{ secrets.GH_ACCESS_TOKEN }}@github.com/ip812/apps.git
+          git remote set-url origin https://github-actions:${{ secrets.GH_ACCESS_TOKEN }}@github.com/${ORG}/apps.git
           git add prod/docker-stack.yml
           git commit -m "Update service ${{ env.IMAGE_NAME }} to ${{ env.TAG }} version"
           git push origin main
