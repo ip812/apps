@@ -115,18 +115,17 @@ jobs:
 
           if [[ -s "${RESULT}"  ]]; then
             TITLE="Recreating cluser"
-            DESCRIPTION="The cluster was recreated **successfully**."
+            DESCRIPTION="The deployment was **successful**."
             STATUS="success"
             FIELDS="Environment=${ENV},Action=${ACTION_LINK}"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
           else
             TITLE="Recreating cluser"
-            DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed to start after cluster recreation"
+            DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment."
             STATUS="failure"
             FIELDS="Images=${RESULT},Environment=${ENV},Action=${ACTION_LINK}"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
           fi
-
 
