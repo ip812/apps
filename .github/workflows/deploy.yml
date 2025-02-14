@@ -5,7 +5,13 @@ on:
   push:
     branches:
       - main
+  repository_dispatch:
+      types: [update-service]
   workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ github.event.client_payload.image_name }}
+  IMAGE_TAG: ${{ github.event.client_payload.image_tag }}
 
 jobs:
   deploy:
@@ -137,12 +143,26 @@ jobs:
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
           if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
-            TITLE="Deployment"
-            DESCRIPTION="The deployment was **successful**."
-            STATUS="success"
-            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
-            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-            .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            // No need to send notification for every commit 
+            // Send this notification only when the cluster is recreated
+            if [[ "${{ github.event_name }}" = "workflow_dispatch" ]];
+              TITLE="Deployment"
+              DESCRIPTION="The deployment was **successful**."
+              STATUS="success"
+              FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            fi
+
+            // Send this only when new version of service is available
+            if [[ "${{ github.event_name }}" = "repository_dispatch" ]];
+              TITLE="Deployment"
+              DESCRIPTION="${{ env.IMAGE_NAME }}${{ env.IMAGE_TAG }} was deployed **successfully**."
+              STATUS="success"
+              FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            fi
           else
             TITLE="Deployment"
             DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment."
