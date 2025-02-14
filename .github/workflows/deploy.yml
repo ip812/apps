@@ -50,7 +50,7 @@ jobs:
           CMD="docker service ls --format '{{.Image}} {{.Replicas}}'"
           .github/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" > deploy_result.txt
 
-      - name: Upload result artifact for "Deploy"
+      - name: Upload result artifact of "Deploy" job
         uses: actions/upload-artifact@v4
         with:
           name: deploy-result
@@ -65,7 +65,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
   
-      - name: Download result artifact for "Deploy"
+      - name: Download result artifact from "Deploy" job
         uses: actions/download-artifact@v4
         if: ${{ needs.deploy.result == 'success' }}
         with:
