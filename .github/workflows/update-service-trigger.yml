@@ -1,0 +1,35 @@
+---
+name: Update service trigger
+
+on:
+  repository_dispatch:
+      types: [update-service]
+
+env:
+  IMAGE_NAME: ${{ github.event.client_payload.image_name }}
+  IMAGE_TAG: ${{ github.event.client_payload.image_tag }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update service tag
+        run: |
+          sed -i "s|${{ env.IMAGE_NAME }}:.*|${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}|" prod/docker-stack.yml
+      - name: Commit changes
+        run: |
+          git config --global user.name 'deployer[bot]'
+          git config --global user.email 'deployer[bot]@users.noreply.${ORG}.com'
+          git remote set-url origin https://github-actions:${{ secrets.GH_ACCESS_TOKEN }}@github.com/ip812/apps.git
+          git add prod/docker-stack.yml
+          git commit -m "Update service ${{ env.IMAGE_NAME }} to ${{ env.TAG }} version"
+          git push origin main
+
