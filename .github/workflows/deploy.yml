@@ -143,8 +143,6 @@ jobs:
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
           if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
-            // No need to send notification for every commit to main
-
             // Send this notification only when the cluster is recreated
             if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
               TITLE="Deployment"
@@ -154,10 +152,8 @@ jobs:
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
               echo "Cluster was recreated successfully"
-            fi
-
             // Send this only when new version of service is available
-            if [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
+            elif [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
               TITLE="Deployment"
               DESCRIPTION="${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed **successfully**."
               STATUS="success"
@@ -165,6 +161,9 @@ jobs:
               DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
               .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
               echo "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed successfully"
+            // No need to send notification for every commit to main
+            else
+              echo "Skip Discord notification for regular commits to main"
             fi
           else
             TITLE="Deployment"
