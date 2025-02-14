@@ -67,6 +67,7 @@ jobs:
   
       - name: Download result artifact for "Deploy"
         uses: actions/download-artifact@v4
+        if: ${{ needs.deploy.result == 'success' }}
         with:
           name: deploy-result
   
