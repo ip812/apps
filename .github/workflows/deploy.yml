@@ -30,7 +30,10 @@ jobs:
 
           INSTANCE_ID=$(aws ec2 describe-instances \
             --region "${AWS_REGION}" \
-            --filters "Name=tag:Environment,Values=prod" "Name=tag:Organization,Values=${ORG}" \
+            --filters \
+              "Name=tag:Environment,Values=prod" \
+              "Name=tag:Organization,Values=${ORG}" \
+              "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
 
