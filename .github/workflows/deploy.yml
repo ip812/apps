@@ -59,6 +59,7 @@ jobs:
   discord-notification:
     runs-on: ubuntu-latest
     needs: deploy
+    if: ${{ always() }}
   
     steps:
       - name: Checkout code
@@ -76,6 +77,16 @@ jobs:
           ENV="prod"
           COMMIT_LINK="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          if [[ "${{ needs.deploy.result }}" != "success" ]]; then
+            TITLE="Deployment"
+            DESCRIPTION="The deployment job **failed**."
+            STATUS="failure"
+            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+            .github/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            exit 0
+          fi
   
           CNT=0
           RESULT="$(mktemp)"
