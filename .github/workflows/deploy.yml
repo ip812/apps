@@ -146,7 +146,7 @@ jobs:
             // No need to send notification for every commit to main
 
             // Send this notification only when the cluster is recreated
-            if [[ "${{ github.event_name }}" = "workflow_dispatch" ]];
+            if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
               TITLE="Deployment"
               DESCRIPTION="The deployment was **successful**."
               STATUS="success"
@@ -157,7 +157,7 @@ jobs:
             fi
 
             // Send this only when new version of service is available
-            if [[ "${{ github.event_name }}" = "repository_dispatch" ]];
+            if [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
               TITLE="Deployment"
               DESCRIPTION="${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed **successfully**."
               STATUS="success"
