@@ -21,7 +21,6 @@ jobs:
 
       - name: Deploy
         env:
-          ORG: ${{ secrets.ORG }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -32,7 +31,7 @@ jobs:
             --region "${AWS_REGION}" \
             --filters \
               "Name=tag:Environment,Values=prod" \
-              "Name=tag:Organization,Values=${ORG}" \
+              "Name=tag:Organization,Values=${{ secrets.ORG }}" \
               "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output json | jq -r '.[]' | head -n 1)
