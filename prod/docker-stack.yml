@@ -7,6 +7,11 @@ services:
       - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
     networks:
       - ip812_network
+    healthcheck:
+      test: ["CMD", "cloudflared", "tunnel", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 1
@@ -48,6 +53,11 @@ services:
       - 8.8.4.4
     networks:
       - ip812_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 1
