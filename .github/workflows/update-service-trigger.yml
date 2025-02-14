@@ -10,12 +10,10 @@ env:
   IMAGE_TAG: ${{ github.event.client_payload.image_tag }}
 
 jobs:
-  deploy:
+  update-service-trigger:
     runs-on: ubuntu-24.04
 
-    permissions:
-      contents: read
-      packages: write
+    permissions: write-all
 
     steps:
       - name: Checkout code
