@@ -1,7 +1,7 @@
 ---
 services:
   cloudflared:
-    image: cloudflare/cloudflared:2025.1.0
+    image: cloudflare/cloudflared:2025.2.1
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
