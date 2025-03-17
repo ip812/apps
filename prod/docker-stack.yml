@@ -3,8 +3,10 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2025.2.1
     command: tunnel run
+    secrets:
+      - cf_tunnel_token
     environment:
-      - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+      TUNNEL_TOKEN: "/run/secrets/cf_tunnel_token"
     networks:
       - ip812_network
     deploy:
@@ -66,11 +68,20 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:9.1.0
+    secrets:
+      - pgadmin_email
+      - pgadmin_password
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "/run/secrets/pgadmin_email"
+      PGADMIN_DEFAULT_PASSWORD_FILE: "/run/secrets/pgadmin_password"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.ip812.com`)"
       - "traefik.http.routers.pgadmin.entrypoints=web"
       - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+      - "traefik.http.services.pgadmin.loadbalancer.healthcheck.path=/misc/ping"
+      - "traefik.http.services.pgadmin.loadbalancer.healthcheck.interval=30s"
+      - "traefik.http.services.pgadmin.loadbalancer.healthcheck.timeout=10s"
     networks:
       - ip812_network
     deploy:
@@ -108,7 +119,8 @@ services:
       - "traefik.http.routers.template.entrypoints=web"
       - "traefik.http.services.template.loadbalancer.server.port=8080"
       - "traefik.http.services.template.loadbalancer.healthcheck.path=/healthz"
-      - "traefik.http.services.template.loadbalancer.healthcheck.interval=10s"
+      - "traefik.http.services.template.loadbalancer.healthcheck.interval=30s"
+      - "traefik.http.services.template.loadbalancer.healthcheck.timeout=10s"
     networks:
       - ip812_network
     deploy:
@@ -128,6 +140,12 @@ services:
         max_attempts: 3
 
 secrets:
+  cf_tunnel_token:
+    external: true
+  pgadmin_email:
+    external: true
+  pgadmin_password:
+    external: true
   go_template_domain:
     external: true
   go_template_port:

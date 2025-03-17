@@ -58,8 +58,7 @@ jobs:
           fi
           echo "HA instance ID: ${INSTANCE_ID}"
 
-          CMD="export CF_TUNNEL_TOKEN=${{ secrets.CF_TUNNEL_TOKEN }} && \
-               curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
+          CMD="curl -H 'Authorization: token ${{ secrets.GH_ACCESS_TOKEN }}' -s https://raw.githubusercontent.com/${{ github.repository }}/main/prod/docker-stack.yml | \
                docker stack deploy -c - ${{ vars.ORG }} --with-registry-auth"
           touch deploy_trigger.txt
           toolkit/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" deploy_trigger.txt
