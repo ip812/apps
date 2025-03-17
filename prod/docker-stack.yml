@@ -3,10 +3,8 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2025.2.1
     command: tunnel run
-    secrets:
-      - cf_tunnel_token
     environment:
-      TUNNEL_TOKEN: "/run/secrets/cf_tunnel_token"
+      TUNNEL_TOKEN: $CF_TUNNEL_TOKEN
     networks:
       - ip812_network
     deploy:
