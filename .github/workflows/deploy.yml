@@ -185,7 +185,7 @@ jobs:
 
           # Count the number of failing services
           if [[ -s "${RESULT}"  ]]; then
-            CNT_FAILING_SERVICES=$(echo "${RESULT}" | sed 's/, /\n/g' | wc -l)
+            CNT_FAILING_SERVICES=$(echo "${RESULT}" | sed 's/[[:space:]]*,[[:space:]]*/\n/g' | wc -l)
           else
             CNT_FAILING_SERVICES=0
           fi
