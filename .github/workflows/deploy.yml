@@ -189,6 +189,9 @@ jobs:
           else
             CNT_FAILING_SERVICES=0
           fi
+
+          echo "DEBUG:"
+          echo "${RESULT}" | sed 's/[[:space:]]*,[[:space:]]*/\n/g'
           echo "Failed services: $(cat ${RESULT})"
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
