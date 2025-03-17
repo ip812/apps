@@ -72,9 +72,8 @@ services:
       - go_template_db_name
       - go_template_db_username
       - go_template_db_password
-      - go_template_db_host
-      - go_template_db_port
-      - go_template_db_ssl
+      - go_template_db_endpoint
+      - go_template_db_ssl_mode
       - go_template_aws_region
       - go_template_aws_access_key_id
       - go_template_aws_secret_access_key
@@ -114,11 +113,9 @@ secrets:
     external: true
   go_template_db_password:
     external: true
-  go_template_db_host:
+  go_template_db_endpoint:
     external: true
-  go_template_db_port:
-    external: true
-  go_template_db_ssl:
+  go_template_db_ssl_mode:
     external: true
   go_template_aws_region:
     external: true
