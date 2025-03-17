@@ -189,8 +189,7 @@ jobs:
           else
             CNT_FAILING_SERVICES=0
           fi
-          echo "Failed services:"
-          cat "${RESULT}"
+          echo "Failed services: $(cat ${RESULT})"
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
           if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
