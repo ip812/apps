@@ -2,7 +2,7 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:2025.2.1
-    command: tunnel run
+    command: tunnel
     environment:
       TUNNEL_TOKEN: $CF_TUNNEL_TOKEN
     networks:
@@ -70,7 +70,7 @@ services:
       - pgadmin_password
     environment:
       PGADMIN_DEFAULT_EMAIL: "ilia.yavorov.petrov@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD_FILE: "/run/secrets/pgadmin_password"
+      PGADMIN_DEFAULT_PASSWORD_FILE: "/run/secrets/pgadmin_passwordi"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.ip812.com`)"
