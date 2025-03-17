@@ -65,7 +65,7 @@ services:
         max_attempts: 3
 
   template:
-    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/go-template:0.2.0
+    image: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/go-template:0.3.0
     secrets:
       - go_template_domain
       - go_template_port
