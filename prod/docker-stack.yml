@@ -69,10 +69,9 @@ services:
   pgadmin:
     image: dpage/pgadmin4:9.1.0
     secrets:
-      - pgadmin_email
       - pgadmin_password
     environment:
-      PGADMIN_DEFAULT_EMAIL: "/run/secrets/pgadmin_email"
+      PGADMIN_DEFAULT_EMAIL: "ilia.yavorov.petrov@gmail.com"
       PGADMIN_DEFAULT_PASSWORD_FILE: "/run/secrets/pgadmin_password"
     labels:
       - "traefik.enable=true"
@@ -140,10 +139,6 @@ services:
         max_attempts: 3
 
 secrets:
-  cf_tunnel_token:
-    external: true
-  pgadmin_email:
-    external: true
   pgadmin_password:
     external: true
   go_template_domain:
