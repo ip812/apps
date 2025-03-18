@@ -110,14 +110,14 @@ jobs:
 
       - name: Upload the trigger's artifact of the "Deploy" job
         uses: actions/upload-artifact@v4
-        continue-on-error: true
+        if: always()
         with:
           name: deploy-trigger
           path: deploy_trigger.txt
 
       - name: Upload the result's artifact of the "Deploy" job
         uses: actions/upload-artifact@v4
-        continue-on-error: true
+        if: always()
         with:
           name: deploy-result
           path: deploy_result.txt
