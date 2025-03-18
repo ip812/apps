@@ -235,17 +235,25 @@ jobs:
               else
                 FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Action=${ACTION_LINK}"
               fi
+
+              TITLE="Deployment Service"
+              DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
+              STATUS="failure"
+              FIELDS="${FIELDS_DATA}}"
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              echo "deployment failed"
             else
               FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
-            fi
 
-            TITLE="Deployment Service"
-            DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
-            STATUS="failure"
-            FIELDS="${FIELDS_DATA}}"
-            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-            echo "deployment failed"
+              TITLE="Deployment Service"
+              DESCRIPTION="Cluster failed to deploy: **$(cat ${RESULT})**"
+              STATUS="failure"
+              FIELDS="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              echo "deployment failed with error: $(cat deploy_trigger.txt | tr '\n' ' ')"
+            fi
           fi
 
           # Teardown
