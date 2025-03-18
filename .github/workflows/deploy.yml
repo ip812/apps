@@ -227,8 +227,7 @@ jobs:
                 echo "Unknown Github Action's event: ${{ github.event_name }}"
               fi
             else
-              echo "Commit link: ${COMMIT_LINK}"
-              if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
+              if [[ -z "${COMMIT_LINK}" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
                 FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
@@ -246,7 +245,7 @@ jobs:
             ERR="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
             echo "Error content: ${ERR}"
   
-            if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
+            if [[ -z "${COMMIT_LINK}" ]]; then
               if [[ "${ERR}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
