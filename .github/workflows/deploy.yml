@@ -203,7 +203,7 @@ jobs:
             sed -i 's/, $//' "${RESULT}"
           fi
 
-          if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
+          if [[ "${CNT_FAILING_SERVICES}" -eq 0 && "${ERR}" == "0" ]]; then
             # Send this notification only when the cluster is recreated
             if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
               TITLE="Deployment Service"
