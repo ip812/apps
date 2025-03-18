@@ -100,7 +100,8 @@ jobs:
           fi
 
           # Check if some of the services failed to deploy
-          if [[ ! -s "${RESULT}" ]]; then
+          echo "Failed services: $(cat ${RESULT})"
+          if [[ $(wc -c < "${RESULT}") -eq 0 ]]; then
             echo "Error: Some services failed to deploy."
             exit 2
           fi
@@ -224,6 +225,9 @@ jobs:
             fi
           else
             ERR_CNT="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | wc -l | xargs)"
+            echo "deploy_trigger.txt:"
+            cat deploy_trigger.txt
+            echo "Error count: ${ERR_CNT}"
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
               if [[ "${ERR_CNT}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
@@ -233,7 +237,6 @@ jobs:
             else
               FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
             fi
-
 
             TITLE="Deployment Service"
             DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
