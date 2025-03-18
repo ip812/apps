@@ -99,8 +99,20 @@ jobs:
             exit 1
           fi
 
+          # Check if some of the services failed to deploy
+          if [[ ! -s "${RESULT}" ]]; then
+            echo "Error: Some services failed to deploy."
+            exit 2
+          fi
+
           # Teardown
           rm "${RESULT}"
+
+      - name: Upload the trigger's artifact of the "Deploy" job
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-trigger
+          path: deploy_trigger.txt
 
       - name: Upload the result's artifact of the "Deploy" job
         uses: actions/upload-artifact@v4
@@ -123,10 +135,14 @@ jobs:
           repository: ip812/toolkit
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: toolkit
+
+      - name: Download the trigger's artifact from the "Deploy" job
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-trigger
   
       - name: Download the result's artifact from the "Deploy" job
         uses: actions/download-artifact@v4
-        if: ${{ needs.deploy.result == 'success' }}
         with:
           name: deploy-result
   
@@ -167,24 +183,12 @@ jobs:
             exit 0
           fi
 
-          # If other error occurred during deployment
-          if [[ "${{ needs.deploy.result }}" != "success" ]]; then
-            TITLE="Deployment Service"
-            DESCRIPTION="The deployment job **failed**."
-            STATUS="failure"
-            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
-            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-            exit 0
-          fi
-
           # Count the number of failing services
           if [[ -s "${RESULT}"  ]]; then
             CNT_FAILING_SERVICES=$(cat "${RESULT}" | grep -o "," | wc -l | xargs)
           else
             CNT_FAILING_SERVICES=0
           fi
-
           echo "Failed services: $(cat ${RESULT})"
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
 
@@ -219,10 +223,22 @@ jobs:
               echo "Unknown Github Action's event: ${{ github.event_name }}"
             fi
           else
+            ERR_CNT="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | wc -l | xargs)"
+            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+              if [[ "${ERR_CNT}" == "0" ]]; then
+                FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
+              else
+                FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Action=${ACTION_LINK}"
+              fi
+            else
+              FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+            fi
+
+
             TITLE="Deployment Service"
             DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
             STATUS="failure"
-            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+            FIELDS="${FIELDS_DATA}}"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             echo "deployment failed"
