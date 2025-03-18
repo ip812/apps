@@ -157,103 +157,115 @@ jobs:
           COMMIT_LINK="${{ env.COMMIT_URL }}"
           ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-          ERR="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
-          echo "Error content: ${ERR}"
+          if [[ -f deploy_result.txt ]]; then
+            CNT=0
+            RESULT="$(mktemp)"
+            while read LINE; do
+              [[ -z "${LINE}" ]] && continue
 
-          CNT=0
-          RESULT="$(mktemp)"
-          while read LINE; do
-            [[ -z "${LINE}" ]] && continue
+              CNT=$((CNT + 1))
 
-            CNT=$((CNT + 1))
+              IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1 | xargs)" 
+              REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2 | xargs)" 
+              echo "Image: ${IMAGE}"
+              echo "Replicas: ${REPLICAS}"
 
-            IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1 | xargs)" 
-            REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2 | xargs)" 
-            echo "Image: ${IMAGE}"
-            echo "Replicas: ${REPLICAS}"
-
-            if [[ "${REPLICAS}" != "1/1" ]]; then 
-                echo "Image ${IMAGE} failed to deploy"
-                printf "${IMAGE}, " >> "${RESULT}"
+              if [[ "${REPLICAS}" != "1/1" ]]; then 
+                  echo "Image ${IMAGE} failed to deploy"
+                  printf "${IMAGE}, " >> "${RESULT}"
+              fi
+            done < <(cat deploy_result.txt)
+            
+            # If there are 0 services to deploy, something went wrong
+            if [[ ${CNT} -eq 0 ]]; then
+              TITLE="Deployment Service"
+              DESCRIPTION="**0 services** are running after the deployment."
+              STATUS="failure"
+              FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              exit 89
             fi
-          done < <(cat deploy_result.txt)
 
-          # If there are 0 services to deploy, something went wrong
-          if [[ ${CNT} -eq 0 && "${ERR}" == "0" ]]; then
-            TITLE="Deployment Service"
-            DESCRIPTION="**0 services** are running after the deployment."
-            STATUS="failure"
-            FIELDS="$([ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "Environment=${ENV},Action=${ACTION_LINK}" || echo "Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}")"
-            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-            exit 0
-          fi
-
-          # Count the number of failing services
-          if [[ -s "${RESULT}"  ]]; then
-            CNT_FAILING_SERVICES=$(cat "${RESULT}" | grep -o "," | wc -l | xargs)
-          else
-            CNT_FAILING_SERVICES=0
-          fi
-          echo "Failed services: $(cat ${RESULT})"
-          echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
-
-          # Remove the ", " at the end
-          if [[ -s "${RESULT}"  ]]; then
-            sed -i 's/, $//' "${RESULT}"
-          fi
-
-          if [[ "${CNT_FAILING_SERVICES}" -eq 0 && "${ERR}" == "0" ]]; then
-            # Send this notification only when the cluster is recreated
-            if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
-              TITLE="Deployment Service"
-              DESCRIPTION="The deployment was **successful**."
-              STATUS="success"
-              FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
-              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-              echo "Cluster was recreated successfully"
-            # Send this only when new version of service is available
-            elif [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
-              TITLE="Deployment Service"
-              DESCRIPTION="**${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}** was deployed **successfully**."
-              STATUS="success"
-              FIELDS="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}" 
-              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-              echo "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed successfully"
-            # No need to send notification for every commit to main
-            elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-              echo "Skip Discord notification for regular commits to main"
+            # Count the number of failing services
+            if [[ -s "${RESULT}"  ]]; then
+              CNT_FAILING_SERVICES=$(cat "${RESULT}" | grep -o "," | wc -l | xargs)
             else
-              echo "Unknown Github Action's event: ${{ github.event_name }}"
+              CNT_FAILING_SERVICES=0
+            fi
+            echo "Failed services: $(cat ${RESULT})"
+            echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
+
+            # Remove the ", " at the end
+            if [[ -s "${RESULT}"  ]]; then
+              sed -i 's/, $//' "${RESULT}"
+            fi
+
+            if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
+              # Send this notification only when the cluster is recreated
+              if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
+                TITLE="Deployment Service"
+                DESCRIPTION="The deployment was **successful**."
+                STATUS="success"
+                FIELDS="Environment=${ENV},Action=${ACTION_LINK}" 
+                DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+                toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+                echo "Cluster was recreated successfully"
+              # Send this only when new version of service is available
+              elif [[ "${{ github.event_name }}" = "repository_dispatch" ]]; then
+                TITLE="Deployment Service"
+                DESCRIPTION="**${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}** was deployed **successfully**."
+                STATUS="success"
+                FIELDS="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}" 
+                DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+                toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+                echo "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} was deployed successfully"
+              # No need to send notification for every commit to main
+              elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+                echo "Skip Discord notification for regular commits to main"
+              else
+                echo "Unknown Github Action's event: ${{ github.event_name }}"
+              fi
+            else
+              if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
+                FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
+              else
+                FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              fi
+
+              TITLE="Deployment Service"
+              DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
+              STATUS="failure"
+              FIELDS="${FIELDS_DATA}"
+              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+              echo "deployment failed with error: $(cat deploy_trigger.txt | tr '\n' ' ')"
             fi
           else
+            ERR="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
+            echo "Error content: ${ERR}"
+
             if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
               if [[ "${ERR}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
                 FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Action=${ACTION_LINK}"
               fi
-
-              TITLE="Deployment Service"
-              DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
-              STATUS="failure"
-              FIELDS="${FIELDS_DATA}}"
-              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-              echo "deployment failed"
             else
-              FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              if [[ "${ERR}" == "0" ]]; then
+                FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              else
+                FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
+              fi
+            if
 
-              TITLE="Deployment Service"
-              DESCRIPTION="Cluster failed to deploy: **$(cat ${RESULT})**"
-              STATUS="failure"
-              FIELDS="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
-              DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
-              toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
-              echo "deployment failed with error: $(cat deploy_trigger.txt | tr '\n' ' ')"
-            fi
+            TITLE="Deployment Service"
+            DESCRIPTION="Cluster deployment **failed**"
+            STATUS="failure"
+            FIELDS="${FIELDS_DATA}}"
+            DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
+            toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
+            echo "deployment failed"
           fi
 
           # Teardown
