@@ -229,8 +229,7 @@ jobs:
             echo "deploy_trigger.txt:"
             cat deploy_trigger.txt
             echo "Error count: ${ERR_CNT}"
-            echo "Github event name: ${{ github.event_name }}"
-            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ -z "${COMMIT_LINK}" ]]; then
               if [[ "${ERR_CNT}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
