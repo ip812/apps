@@ -2,7 +2,7 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:2025.2.1
-    command: tunnel run
+    command: tunnel
     environment:
       TUNNEL_TOKEN: $CF_TUNNEL_TOKEN
     networks:
