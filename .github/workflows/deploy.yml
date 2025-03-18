@@ -227,6 +227,7 @@ jobs:
                 echo "Unknown Github Action's event: ${{ github.event_name }}"
               fi
             else
+              echo "Commit link: ${COMMIT_LINK}"
               if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
