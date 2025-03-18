@@ -100,7 +100,6 @@ jobs:
           fi
 
           # Check if some of the services failed to deploy
-          echo "Failed services: $(cat ${RESULT})"
           if [[ -s "${RESULT}" ]]; then
             echo "Error: Some services failed to deploy."
             exit 2
@@ -111,12 +110,14 @@ jobs:
 
       - name: Upload the trigger's artifact of the "Deploy" job
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: deploy-trigger
           path: deploy_trigger.txt
 
       - name: Upload the result's artifact of the "Deploy" job
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: deploy-result
           path: deploy_result.txt
