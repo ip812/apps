@@ -178,22 +178,20 @@ jobs:
             exit 0
           fi
 
-          # Remove the ", " at the end
-          if [[ -s "${RESULT}"  ]]; then
-            sed -i 's/, $//' "${RESULT}"
-          fi
-
           # Count the number of failing services
           if [[ -s "${RESULT}"  ]]; then
-            CNT_FAILING_SERVICES=$(cat "${RESULT}" | sed 's/[[:space:]]*,[[:space:]]*/\n/g' | wc -l)
+            CNT_FAILING_SERVICES=$(cat "${RESULT}" | grep -o "," | wc -l | xargs)
           else
             CNT_FAILING_SERVICES=0
           fi
 
-          echo "DEBUG:"
-          cat "${RESULT}" | sed 's/[[:space:]]*,[[:space:]]*/\n/g'
           echo "Failed services: $(cat ${RESULT})"
           echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
+
+          # Remove the ", " at the end
+          if [[ -s "${RESULT}"  ]]; then
+            sed -i 's/, $//' "${RESULT}"
+          fi
 
           if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
             # Send this notification only when the cluster is recreated
