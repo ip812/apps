@@ -126,50 +126,50 @@ jobs:
     runs-on: ubuntu-24.04
     needs: deploy
     if: ${{ always() }}
-  
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+  
       - name: Checkout toolkit
         uses: actions/checkout@v4
         with:
           repository: ip812/toolkit
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: toolkit
-
+  
       - name: Download the trigger's artifact from the "Deploy" job
         uses: actions/download-artifact@v4
         with:
           name: deploy-trigger
-  
+    
       - name: Download the result's artifact from the "Deploy" job
         uses: actions/download-artifact@v4
         with:
           name: deploy-result
-  
+    
       - name: Send notification to Discord's deployments channel
         if: always()
         run: |
           set -e
-
+  
           ENV="prod"
           COMMIT_LINK="${{ env.COMMIT_URL }}"
           ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
+  
           if [[ -f deploy_result.txt ]]; then
             CNT=0
             RESULT="$(mktemp)"
             while read LINE; do
               [[ -z "${LINE}" ]] && continue
-
+  
               CNT=$((CNT + 1))
-
+  
               IMAGE="$(echo "${LINE}" | cut -d ' ' -f 1 | xargs)" 
               REPLICAS="$(echo "${LINE}" | cut -d ' ' -f 2 | xargs)" 
               echo "Image: ${IMAGE}"
               echo "Replicas: ${REPLICAS}"
-
+  
               if [[ "${REPLICAS}" != "1/1" ]]; then 
                   echo "Image ${IMAGE} failed to deploy"
                   printf "${IMAGE}, " >> "${RESULT}"
@@ -186,7 +186,7 @@ jobs:
               toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
               exit 89
             fi
-
+  
             # Count the number of failing services
             if [[ -s "${RESULT}"  ]]; then
               CNT_FAILING_SERVICES=$(cat "${RESULT}" | grep -o "," | wc -l | xargs)
@@ -195,12 +195,12 @@ jobs:
             fi
             echo "Failed services: $(cat ${RESULT})"
             echo "Number of failing services: ${CNT_FAILING_SERVICES}" 
-
+  
             # Remove the ", " at the end
             if [[ -s "${RESULT}"  ]]; then
               sed -i 's/, $//' "${RESULT}"
             fi
-
+  
             if [[ "${CNT_FAILING_SERVICES}" -eq 0 ]]; then
               # Send this notification only when the cluster is recreated
               if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
@@ -232,7 +232,7 @@ jobs:
               else
                 FIELDS_DATA="Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
               fi
-
+  
               TITLE="Deployment Service"
               DESCRIPTION="**${CNT_FAILING_SERVICES} services** failed after deployment: **$(cat ${RESULT})**"
               STATUS="failure"
@@ -244,7 +244,7 @@ jobs:
           else
             ERR="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
             echo "Error content: ${ERR}"
-
+  
             if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
               if [[ "${ERR}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
@@ -257,16 +257,16 @@ jobs:
               else
                 FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Commit=${COMMIT_LINK},Action=${ACTION_LINK}"
               fi
-            if
-
+            fi
+  
             TITLE="Deployment Service"
             DESCRIPTION="Cluster deployment **failed**"
             STATUS="failure"
-            FIELDS="${FIELDS_DATA}}"
+            FIELDS="${FIELDS_DATA}"
             DISCORD_DEPLOYMENTS_WEBHOOK_URL=${{ secrets.DISCORD_DEPLOYMENTS_WEBHOOK_URL }}
             toolkit/scripts/send-discord-notification.sh "${TITLE}" "${DESCRIPTION}" "${STATUS}" "${FIELDS}" "${DISCORD_DEPLOYMENTS_WEBHOOK_URL}"
             echo "deployment failed"
           fi
-
+  
           # Teardown
           rm "${RESULT}"
