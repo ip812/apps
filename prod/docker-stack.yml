@@ -108,7 +108,7 @@ services:
       - go_template_db_endpoint
       - go_template_db_ssl_mode
       - go_template_aws_region
-      - go_template_aws_access_key_id
+      - go_template_aws_access_key_idii
       - go_template_aws_secret_access_keyii
     labels:
       - "traefik.enable=true"
