@@ -101,7 +101,7 @@ jobs:
 
           # Check if some of the services failed to deploy
           echo "Failed services: $(cat ${RESULT})"
-          if [[ $(wc -c < "${RESULT}") -eq 0 ]]; then
+          if [[ -s "${RESULT}" ]]; then
             echo "Error: Some services failed to deploy."
             exit 2
           fi
@@ -224,7 +224,7 @@ jobs:
               echo "Unknown Github Action's event: ${{ github.event_name }}"
             fi
           else
-            ERR_CNT="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | wc -l | xargs)"
+            ERR_CNT="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v '^\s*$' | wc -l | xargs)"
             echo "deploy_trigger.txt:"
             cat deploy_trigger.txt
             echo "Error count: ${ERR_CNT}"
