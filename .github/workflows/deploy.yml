@@ -149,6 +149,7 @@ jobs:
           name: deploy-result
   
       - name: Send notification to Discord's deployments channel
+        if: always()
         run: |
           set -e
 
