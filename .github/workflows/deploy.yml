@@ -157,6 +157,9 @@ jobs:
           COMMIT_LINK="${{ env.COMMIT_URL }}"
           ACTION_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
+          ERR="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
+          echo "Error content: ${ERR}"
+
           CNT=0
           RESULT="$(mktemp)"
           while read LINE; do
@@ -176,7 +179,7 @@ jobs:
           done < <(cat deploy_result.txt)
 
           # If there are 0 services to deploy, something went wrong
-          if [[ ${CNT} -eq 0 ]]; then
+          if [[ ${CNT} -eq 0 && "${ERR}" == "0" ]]; then
             TITLE="Deployment Service"
             DESCRIPTION="**0 services** are running after the deployment."
             STATUS="failure"
@@ -226,12 +229,8 @@ jobs:
               echo "Unknown Github Action's event: ${{ github.event_name }}"
             fi
           else
-            ERR_CNT="$(cat deploy_trigger.txt | grep -v -E "^Creating.*" | grep -v -E "^Updating.*" | grep -v '^\s*$' | wc -l | xargs)"
-            echo "deploy_trigger.txt:"
-            cat deploy_trigger.txt
-            echo "Error count: ${ERR_CNT}"
             if [[ -z "${COMMIT_LINK}" || -n "${COMMIT_LINK}" ]]; then
-              if [[ "${ERR_CNT}" == "0" ]]; then
+              if [[ "${ERR}" == "0" ]]; then
                 FIELDS_DATA="Environment=${ENV},Action=${ACTION_LINK}"
               else
                 FIELDS_DATA="Error=$(cat deploy_trigger.txt | tr '\n' ' '),Environment=${ENV},Action=${ACTION_LINK}"
