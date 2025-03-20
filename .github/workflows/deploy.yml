@@ -105,7 +105,6 @@ jobs:
             exit 2
           fi
 
-          # Teardown
           rm "${RESULT}"
 
       - name: Upload the trigger's artifact of the "Deploy" job
