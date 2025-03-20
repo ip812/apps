@@ -24,7 +24,7 @@ services:
         max_attempts: 3
 
   traefik:
-    image: "traefik:v3.2"
+    image: "traefik:v3.3.4"
     command:
       - "--api.dashboard=true"
       - "--providers.docker=true"
