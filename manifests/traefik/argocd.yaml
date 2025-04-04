@@ -2,8 +2,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd
-  namespace: traefik
+  name: traefik
+  namespace: argocd
   annotations:
     notifications.argoproj.io/subscribe.on-deployed.slack: kubernetes
     notifications.argoproj.io/subscribe.on-sync-failed.slack: kubernetes
