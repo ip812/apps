@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: argocd
-  namespace: hcp-vault
+  namespace: traefik
   annotations:
     notifications.argoproj.io/subscribe.on-deployed.slack: kubernetes
     notifications.argoproj.io/subscribe.on-sync-failed.slack: kubernetes
@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/ip812/apps.git
     targetRevision: HEAD
-    path: base/hcp-vault
+    path: manifests/traefik
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/ip812/apps.git
     targetRevision: HEAD
-    path: base/argocd
+    path: manifests/argocd
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

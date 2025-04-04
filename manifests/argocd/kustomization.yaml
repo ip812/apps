@@ -4,6 +4,5 @@ kind: Kustomization
 metadata:
   name: arbitrary
 resources:
-  - argocd.yaml
   - config-map.yaml
   - ingress-route.yaml
