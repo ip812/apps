@@ -1,0 +1,9 @@
+---
+resources:
+  - namespaces/hcp-vault.yaml
+  - namespaces/traefik.yaml
+  - namespaces/cloudflare.yaml
+  - namespaces/go-template.yaml
+  - secrets/hcp-auth.yaml
+  - secrets/cloudflare.yaml
+  - secrets/go-template.yaml
