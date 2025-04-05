@@ -1,0 +1,6 @@
+---
+resources:
+  - traefik
+  - argocd
+  - hcp-vault
+  - cloudflare
