@@ -1,0 +1,4 @@
+---
+resources:
+  - argocd.yaml
+  - hcp-auth.yaml
