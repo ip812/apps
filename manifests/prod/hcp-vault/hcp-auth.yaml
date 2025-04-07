@@ -8,6 +8,6 @@ spec:
   organizationID: "82cb4a03-1a1e-4302-b760-d92238215d36"
   projectID: "1502f049-4587-4e2b-b4c1-cf0fb7a27943"
   servicePrincipal:
-    secretRef: hcp-credentials
+    secretRef: hcp-vault/hcp-credentials
   allowedNamespaces:
     - "*"
