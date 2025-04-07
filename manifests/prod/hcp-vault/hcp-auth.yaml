@@ -9,3 +9,5 @@ spec:
   projectID: "1502f049-4587-4e2b-b4c1-cf0fb7a27943"
   servicePrincipal:
     secretRef: hcp-credentials
+  allowedNamespaces:
+    - "*"
