@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cloudflare
+  name: go-template
   namespace: argocd
   annotations:
     notifications.argoproj.io/subscribe.on-deployed.slack: kubernetes
@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/ip812/apps.git
     targetRevision: main
-    path: manifests/prod/cloudflare
+    path: manifests/prod/go-template
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

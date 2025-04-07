@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: go-template-ing-route
+  namespace: ip812
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`template.ip812.com`)
+      kind: Rule
+      services:
+        - name: go-template-svc
+          port: 80
