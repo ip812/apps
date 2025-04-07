@@ -4,3 +4,4 @@ resources:
   - argocd
   - hcp-vault
   - cloudflare
+  - go-template
