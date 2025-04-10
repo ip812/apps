@@ -16,6 +16,8 @@ spec:
       labels:
         app: go-template
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
         - name: go-template
           image: iypetrov/debug-display-req-headers:1.11.0
