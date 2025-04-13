@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pgadmin-ing-route
+  namespace: ip812
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pgadmin.ip812.com`)
+      kind: Rule
+      services:
+        - name: pgadmin-svc
+          port: 80
