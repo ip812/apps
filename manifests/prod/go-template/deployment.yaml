@@ -24,3 +24,32 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+          env:
+            - name: APP_ENV
+              value: prod
+            - name: APP_DOMAIN
+              value: template.ip812.com
+            - name: APP_PORT
+              value: 8080
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: go_template_pg_name
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: pg_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: pg_password
+            - name: DB_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: pg_endpoint
+            - name: DB_SSL_MODE
+              value: require
