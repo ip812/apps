@@ -30,7 +30,7 @@ spec:
             - name: APP_DOMAIN
               value: template.ip812.com
             - name: APP_PORT
-              value: 8080
+              value: "8080"
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
