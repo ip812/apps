@@ -53,3 +53,18 @@ spec:
                   key: pg_endpoint
             - name: DB_SSL_MODE
               value: require
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: aws_secret_access_key
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: hcp-vault-secrets-app
+                  key: aws_region
