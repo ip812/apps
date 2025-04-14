@@ -10,7 +10,7 @@ config:
     - name: ecr
       api_url: https://678468774710.dkr.ecr.eu-central-1.amazonaws.com
       ping: yes
-      credentials: secret:argocd/ecr-secret
+      credentials: secret:argocd/ecr-creds
       limit: 20
       default: true
       insecure: false
