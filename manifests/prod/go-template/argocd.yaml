@@ -5,6 +5,8 @@ metadata:
   name: go-template
   namespace: argocd
   annotations:
+    argocd-image-updater.argoproj.io/image-list: 678468774710.dkr.ecr.eu-central-1.amazonaws.com/ip812/go-template:~v0.1
+    argocd-image-updater.argoproj.io/write-back-method: git
     notifications.argoproj.io/subscribe.on-deployed.slack: kubernetes
     notifications.argoproj.io/subscribe.on-sync-failed.slack: kubernetes
     notifications.argoproj.io/subscribe.on-sync-succeeded.slack: kubernetes
