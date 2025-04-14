@@ -14,4 +14,3 @@ config:
       limit: 20
       default: true
       insecure: false
-      type: ecr
