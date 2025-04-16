@@ -5,15 +5,15 @@ additionalArguments:
   - "--providers.kubernetesingress"
 ports:
   web:
-    port: 8080
-    exposedPort: 80
+    port: 9000
+    exposedPort: 9000
     protocol: TCP
 ingressRoute:
   dashboard:
     enabled: true
 service:
   enabled: true
-  type: LoadBalancer
+  type: ClusterIP
 experimental:
   plugins:
     cloudflarewarp:
