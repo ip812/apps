@@ -1,6 +1,5 @@
 ---
 resources:
-  - argocd.yaml
   - deployment.yaml
   - service.yaml
   - ingress-route.yaml

@@ -1,5 +1,0 @@
----
-resources:
-  - argocd.yaml
-  - hcp-auth.yaml
-  - hcp-vault-secrets-app.yaml

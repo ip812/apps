@@ -1,5 +1,0 @@
----
-resources:
-  - argocd.yaml
-  - config-map.yaml
-  - ingress-route.yaml

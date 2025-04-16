@@ -1,4 +1,3 @@
 ---
 resources:
-  - argocd.yaml
   - ingress-route.yaml
