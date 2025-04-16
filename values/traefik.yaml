@@ -5,8 +5,8 @@ additionalArguments:
   - "--providers.kubernetesingress"
 ports:
   web:
-    port: 80
-    exposedPort: 8080
+    port: 8080
+    exposedPort: 80
     protocol: TCP
 ingressRoute:
   dashboard:
