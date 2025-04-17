@@ -58,17 +58,3 @@ jobs:
           CMD="k0s kubectl apply -k /apps/manifests/prod"
           touch apply_result.txt
           toolkit/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" apply_result.txt
-
-      - name: Upload the pull's artifact of the "Pull & apply latest changes" job
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: pull-result
-          path: pull_result.txt
-
-      - name: Upload the apply's artifact of the "Pull & apply latest changes" job
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: apply-result
-          path: apply_result.txt
