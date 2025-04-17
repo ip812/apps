@@ -51,7 +51,7 @@ jobs:
           fi
           echo "HA instance ID: ${INSTANCE_ID}"
 
-          CMD="git -C /apps pull"
+          CMD="git -C /apps reset --hard && git -C /apps clean -fd && git -C /apps pull"
           touch pull_result.txt
           toolkit/scripts/aws-ssm-exec-cmd-on-ec2.sh "${CMD}" "${INSTANCE_ID}" pull_result.txt
 
