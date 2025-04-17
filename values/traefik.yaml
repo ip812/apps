@@ -20,7 +20,7 @@ experimental:
       moduleName: "github.com/BetterCorp/cloudflarewarp"
       version: "v1.3.0"
 log:
-  level: INFO
+  level: WARN
 http:
   routers:
     traefik:
