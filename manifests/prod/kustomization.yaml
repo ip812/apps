@@ -1,6 +1,5 @@
 ---
 resources:
-  - go-template
-  - traefik
   - cloudflare
+  - go-template
   - pgadmin 
