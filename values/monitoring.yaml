@@ -1,3 +1,23 @@
 ---
 cluster:
   name: ip812-cluster
+
+destinations:
+ - name: grafanaCloudPrometheus
+   type: prometheus
+   urlFrom: env("PROMETHEUS_URL")
+   auth:
+     type: bearerToken
+     bearerTokenFrom: env("GRAFANA_CLOUD_ACCESS_POLICY_TOKEN")
+ - name: grafanaCloudLoki
+   type: loki
+   urlFrom: env("LOKI_URL")
+   auth:
+     type: bearerToken
+     bearerTokenFrom: env("GRAFANA_CLOUD_ACCESS_POLICY_TOKEN")
+
+clusterMetrics:
+  enabled: true
+
+podLogs:
+  enabled: true
