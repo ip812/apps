@@ -13,6 +13,6 @@ Vault alternative:
 - Whenever there is a change in the bootstrapping script, the VM will be recreated
 
 P.S.
-At the moment everything is located in a single namespace and there is one main secret(hcp-vault-secrets-app) that holds all secrets needed for my applications
+At the moment everything is located in a single namespace and there is one main secret(ip812-secrets) that holds all secrets needed for my applications
 
 The reason for this is that if I want to use HCP Vault, I need to use the same namespace for all resources(HCP Vault Enterprise Standard license is required to manage secrets in multiple namespaces)

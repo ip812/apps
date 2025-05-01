@@ -30,5 +30,5 @@ spec:
             - name: PGADMIN_DEFAULT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: pg_password

@@ -34,37 +34,37 @@ spec:
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: go_template_pg_name
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: pg_username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: pg_password
             - name: DB_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: pg_endpoint
             - name: DB_SSL_MODE
               value: require
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: aws_access_key
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: aws_secret_key
             - name: AWS_REGION
               valueFrom:
                 secretKeyRef:
-                  name: hcp-vault-secrets-app
+                  name: ip812-secrets
                   key: aws_region
