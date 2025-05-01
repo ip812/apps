@@ -1,23 +1,18 @@
 ---
-cluster:
-  name: ip812-cluster
-
-destinations:
- - name: grafanaCloudPrometheus
-   type: prometheus
-   urlFrom: env("PROMETHEUS_URL")
-   auth:
-     type: bearerToken
-     bearerTokenFrom: env("GRAFANA_CLOUD_ACCESS_POLICY_TOKEN")
- - name: grafanaCloudLoki
-   type: loki
-   urlFrom: env("LOKI_URL")
-   auth:
-     type: bearerToken
-     bearerTokenFrom: env("GRAFANA_CLOUD_ACCESS_POLICY_TOKEN")
-
-clusterMetrics:
+metrics:
   enabled: true
+  instance: k0s-node
+  prometheusRemoteWrite:
+    - url: "${PROMETHEUS_URL}"
+      bearer_token: "${GRAFANA_CLOUD_ACCESS_POLICY_TOKEN}"
 
-podLogs:
+logs:
   enabled: true
+  loki:
+    push_api:
+      endpoint: "${LOKI_URL}"
+      bearer_token: "${GRAFANA_CLOUD_ACCESS_POLICY_TOKEN}"
+
+integrations:
+  agent:
+    enabled: true
