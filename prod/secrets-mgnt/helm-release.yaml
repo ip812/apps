@@ -1,0 +1,16 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: doppler
+  namespace: secrets-mgnt
+spec:
+  releaseName: doppler
+  interval: 10m
+  chart:
+    spec:
+      chart: doppler
+      sourceRef:
+        kind: HelmRepository
+        name: doppler
+        namespace: secrets-mgnt
