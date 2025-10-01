@@ -12,17 +12,17 @@ spec:
   path: ./prod/secrets-mgnt
   prune: true
   wait: true
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: monitoring
-  namespace: flux-system
-spec:
-  interval: 60s
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./prod/monitoring
-  prune: true
-  wait: true
+# ---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: monitoring
+#   namespace: flux-system
+# spec:
+#   interval: 60s
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+#   path: ./prod/monitoring
+#   prune: true
+#   wait: true
