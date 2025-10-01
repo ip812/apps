@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: doppler
-  namespace: secrets-mgnt
+  namespace: doppler-operator-system
 spec:
   interval: 10m0s         
   url: https://helm.doppler.com
