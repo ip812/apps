@@ -8,5 +8,6 @@ resources:
 - helmrelease.yaml
 configMapGenerator:
   - name: grafana-k8s-monitoring-values
+    namespace: monitoring
     files:
       - values.yaml=../../values/grafana-k8s-monitoring.yaml
