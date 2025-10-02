@@ -16,7 +16,7 @@ spec:
         name: grafana-k8s-monitoring
         namespace: monitoring
   valuesFrom:
-    - kind: GitRepository
-      name: flux-system
-      valuesKey: ./values/grafana-k8s-monitoring.yaml
+    - kind: ConfigMap
+      name: grafana-k8s-monitoring-values
+      valuesKey: values.yaml
       targetPath: .
