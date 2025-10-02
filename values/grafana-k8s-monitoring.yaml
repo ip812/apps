@@ -17,7 +17,6 @@ destinations:
       name: grafana-k8s-monitoring-secret
       namespace: monitoring
 
-
   - name: grafana-cloud-logs
     type: loki
     url: https://logs-prod-012.grafana.net/loki/api/v1/push
