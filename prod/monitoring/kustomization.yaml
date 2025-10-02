@@ -9,4 +9,4 @@ resources:
 configMapGenerator:
   - name: grafana-k8s-monitoring-values
     files:
-      - values.yaml=values/grafana-k8s-monitoring.yaml
+      - values.yaml=../../values/grafana-k8s-monitoring.yaml
