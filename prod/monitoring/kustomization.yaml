@@ -6,3 +6,7 @@ resources:
 - secret.yaml
 - helmrepository.yaml
 - helmrelease.yaml
+configMapGenerator:
+  - name: grafana-k8s-monitoring-values
+    files:
+      - values.yaml=values/grafana-k8s-monitoring.yaml

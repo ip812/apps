@@ -18,6 +18,5 @@ spec:
   valuesFrom:
     - kind: GitRepository
       name: flux-system
-      namespace: flux-system
       valuesKey: ./values/grafana-k8s-monitoring.yaml
       targetPath: .
