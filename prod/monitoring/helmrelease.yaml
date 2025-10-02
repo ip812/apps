@@ -18,5 +18,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: grafana-k8s-monitoring-values
-      valuesKey: values.yaml
-      targetPath: .
