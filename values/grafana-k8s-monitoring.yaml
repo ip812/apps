@@ -11,7 +11,7 @@ destinations:
     auth:
       type: basic
       username: "2528675"
-      passwordFrom: remote.kubernetes.secret.grafana-k8s-monitoring.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
+      passwordFrom: remote_k8s_gf_token.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
 
   - name: grafana-cloud-logs
     type: loki
@@ -19,7 +19,7 @@ destinations:
     auth:
       type: basic
       username: "1260014"
-      passwordFrom: remote.kubernetes.secret.grafana-k8s-monitoring.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
+      passwordFrom: remote_k8s_gf_token.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
 
 clusterMetrics:
   enabled: true
@@ -55,14 +55,20 @@ alloy-metrics:
       - name: GCLOUD_FM_COLLECTOR_ID
         value: grafana-k8s-monitoring-\$(CLUSTER_NAME)-\$(NAMESPACE)-\$(POD_NAME)
 
-  remoteConfig:
-    enabled: true
-    url: https://fleet-management-prod-011.grafana.net
-    auth:
-      type: basic
-      username: "1302220"
-      passwordFrom: remote.kubernetes.secret.grafana-k8s-monitoring.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
-      
+    extraConfig: |-
+      remote.kubernetes.secret "remote_k8s_gf_token" {
+        namespace = "monitoring"
+        name      = "grafana-k8s-monitoring-secret"
+      }
+
+    remoteConfig:
+      enabled: true
+      url: https://fleet-management-prod-011.grafana.net
+      auth:
+        type: basic
+        username: "1302220"
+        passwordFrom: remote_k8s_gf_token.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
+
 alloy-logs:
   enabled: true
   alloy:
@@ -89,13 +95,19 @@ alloy-logs:
       - name: GCLOUD_FM_COLLECTOR_ID
         value: grafana-k8s-monitoring-\$(CLUSTER_NAME)-\$(NAMESPACE)-alloy-logs-\$(NODE_NAME)
 
-  remoteConfig:
-    enabled: true
-    url: https://fleet-management-prod-011.grafana.net
-    auth:
-      type: basic
-      username: "1302220"
-      passwordFrom: remote.kubernetes.secret.grafana-k8s-monitoring.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
+    extraConfig: |-
+      remote.kubernetes.secret "remote_k8s_gf_token" {
+        namespace = "monitoring"
+        name      = "grafana-k8s-monitoring-secret"
+      }
+
+    remoteConfig:
+      enabled: true
+      url: https://fleet-management-prod-011.grafana.net
+      auth:
+        type: basic
+        username: "1302220"
+        passwordFrom: remote_k8s_gf_token.data["GF_CLOUD_ACCESS_POLICY_TOKEN"]
 
 alloy-singleton:
   enabled: false
