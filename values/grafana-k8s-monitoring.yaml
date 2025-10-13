@@ -13,7 +13,6 @@ destinations:
       usernameKey: GF_CLOUD_PROMETHEUS_USER_ID
       passwordKey: GF_CLOUD_ACCESS_POLICY_TOKEN
     secret:
-      create: false
       name: grafana-k8s-monitoring-secret
       namespace: monitoring
 
@@ -25,7 +24,6 @@ destinations:
       usernameKey: GF_CLOUD_LOGS_USER_ID
       passwordKey: GF_CLOUD_ACCESS_POLICY_TOKEN
     secret:
-      create: false
       name: grafana-k8s-monitoring-secret
       namespace: monitoring
 
@@ -71,7 +69,6 @@ alloy-metrics:
       usernameKey: GF_CLOUD_PROFILES_USER_ID
       passwordKey: GF_CLOUD_ACCESS_POLICY_TOKEN
     secret:
-      create: false
       name: grafana-k8s-monitoring-secret
       namespace: monitoring
       
@@ -109,7 +106,6 @@ alloy-logs:
       usernameKey: GF_CLOUD_PROFILES_USER_ID
       passwordKey: GF_CLOUD_ACCESS_POLICY_TOKEN
     secret:
-      create: false
       name: grafana-k8s-monitoring-secret
       namespace: monitoring
 
