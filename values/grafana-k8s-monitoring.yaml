@@ -15,7 +15,6 @@ destinations:
     secret:
       create: false
       name: grafana-k8s-monitoring-secret
-      namespace: monitoring
 
   - name: grafana-cloud-logs
     type: loki
@@ -27,7 +26,6 @@ destinations:
     secret:
       create: false
       name: grafana-k8s-monitoring-secret
-      namespace: monitoring
 
 clusterMetrics:
   enabled: true
@@ -73,7 +71,6 @@ alloy-metrics:
     secret:
       create: false
       name: grafana-k8s-monitoring-secret
-      namespace: monitoring
       
 alloy-logs:
   enabled: true
@@ -111,7 +108,6 @@ alloy-logs:
     secret:
       create: false
       name: grafana-k8s-monitoring-secret
-      namespace: monitoring
 
 alloy-singleton:
   enabled: false
