@@ -6,4 +6,4 @@ resources:
 - monitoring.yaml
 - vpn.yaml
 - database.yaml
-- go-template.yaml
+# - go-template.yaml
