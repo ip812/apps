@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.name }}-deploy"
+  labels:
+    app: "{{ .Values.name }}" 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.name }}"  
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.name }}"  
+    spec:
+      imagePullSecrets:
+        - name: ghcr-auth
+      containers:
+        - name: "{{ .Values.name }}"  
+          image: "{{ .Values.image }}" 
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+{{- toYaml .Values.env | nindent 12 }}
