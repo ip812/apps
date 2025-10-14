@@ -16,22 +16,22 @@ env:
   - name: APP_ENV
     value: "prod"
   - name: APP_DOMAIN
-    value: "{{ .Values.hostname }}"
+    value: "template.ip812.com"
   - name: APP_PORT
     value: "8080"
   - name: DB_NAME
-    value: "{{ .Values.database.postgres.name }}"
+    value: "template"
   - name: DB_USERNAME
     valueFrom:
       secretKeyRef:
-        name: "{{ .Values.name }}-creds"
+        name: "go-template-creds"
         key: PG_USERNAME
   - name: DB_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: "{{ .Values.name }}-creds"
+        name: "go-template-creds"
         key: PG_PASSWORD
   - name: DB_ENDPOINT
-    value: "{{ .Values.database.postgres.host }}"
+    value: "template-pg-rw.go-template.svc.cluster.local"
   - name: DB_SSL_MODE
     value: disable
