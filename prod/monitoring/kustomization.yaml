@@ -9,7 +9,5 @@ resources:
 configMapGenerator:
   - name: grafana-k8s-monitoring-values
     namespace: monitoring
-    options:
-      disableNameSuffixHash: true
     files:
       - values.yaml=../../values/grafana-k8s-monitoring.yaml
