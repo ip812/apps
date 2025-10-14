@@ -2,10 +2,10 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: "{{ .Values.pgDatabaseName }}-daily-backup"
+  name: "{{ .Values.database.postgres.name }}-daily-backup"
 spec:
   immediate: true
-  schedule: "{{ .Values.pgBackupSchedule }}"
+  schedule: "{{ .Values.database.postgres.backupSchedule }}"
   backupOwnerReference: cluster
   cluster:
-    name: "{{ .Values.pgDatabaseName }}-pg"
+    name: "{{ .Values.database.postgres.name }}-pg"
