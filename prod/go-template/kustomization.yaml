@@ -8,5 +8,7 @@ resources:
 configMapGenerator:
   - name: go-template-values
     namespace: go-template 
+    options:
+      disableNameSuffixHash: true
     files:
       - values.yaml=../../values/go-template.yaml
