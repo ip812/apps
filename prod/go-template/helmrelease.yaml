@@ -13,7 +13,7 @@ spec:
       sourceRef:
         kind: GitRepository
         name: flux-system
-        namespace: go-template
+        namespace: flux-system
   valuesFrom:
     - kind: ConfigMap
       name: go-template-values
