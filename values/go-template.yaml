@@ -1,10 +1,16 @@
 name: "go-template"
 image: "ghcr.io/iypetrov/go-template:1.15.0"
 hostname: "template.ip812.com"
+isInit: false
 database:
   postgres:
     name: "template"
     host: "template-pg-rw.go-template.svc.cluster.local"
+    image: "ghcr.io/cloudnative-pg/postgresql:16.1"
+    storageSize: "1Gi"
+    retentionPolicy: "7d"
+    backupsBucket: "pg-backups-202507041132"
+    backupSchedule: "0 0 0 * * *"
 env:
   - name: APP_ENV
     value: "prod"
