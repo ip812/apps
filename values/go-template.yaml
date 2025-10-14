@@ -7,6 +7,7 @@ database:
     name: "template"
     host: "template-pg-rw.go-template.svc.cluster.local"
     image: "ghcr.io/cloudnative-pg/postgresql:16.1"
+    username: "admin123"
     storageSize: "1Gi"
     retentionPolicy: "7d"
     backupsBucket: "pg-backups-202507041132"
