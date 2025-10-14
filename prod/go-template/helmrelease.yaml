@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: go-template
+  namespace: go-template
+spec:
+  releaseName: go-template
+  interval: 10m
+  chart:
+    spec:
+      chart: ./charts/app
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: go-template
+  valuesFrom:
+    - kind: ConfigMap
+      name: go-template-values
