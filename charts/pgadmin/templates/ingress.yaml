@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pgadmin-ingress
-  namespace: databases
+  namespace: database
 spec:
   defaultBackend:
     service:
