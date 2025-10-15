@@ -15,3 +15,22 @@ spec:
         kind: HelmRepository
         name: cnpg
         namespace: database
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pgadmin
+  namespace: database
+spec:
+  releaseName: pgadmin
+  interval: 1m
+  chart:
+    spec:
+      chart: ./charts/pgadmin
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  valuesFrom:
+    - kind: ConfigMap
+      name: pgadmin-values
