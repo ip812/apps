@@ -18,7 +18,7 @@ spec:
   bootstrap:
     {{- if .Values.isInit }}
     initdb:
-      database: "{{ .Value.database.postgres.name }}"
+      database: "{{ .Values.database.postgres.name }}"
       owner: "{{ .Values.database.postgres.username }}"
       secret:
         name: "{{ .Values.name }}-creds"
