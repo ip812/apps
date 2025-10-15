@@ -3,3 +3,7 @@ servers:
     database: "template"
     host: "template-pg-rw.go-template.svc.cluster.local"
     username: "admin123"
+  - name: "go-template"
+    database: "blog"
+    host: "blog-pg-rw.go-template.svc.cluster.local"
+    username: "admin123"
