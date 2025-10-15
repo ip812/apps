@@ -12,3 +12,8 @@ spec:
   path: ./prod/go-template
   prune: true
   wait: true
+  dependsOn:
+    - name: doppler
+      namespace: flux-system
+    - name: database
+      namespace: flux-system
