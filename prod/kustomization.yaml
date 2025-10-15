@@ -7,4 +7,5 @@ resources:
 - vpn.yaml
 - database.yaml
 - go-template.yaml
+- blog.yaml
 - ingress.yaml
