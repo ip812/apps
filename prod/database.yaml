@@ -12,3 +12,6 @@ spec:
   path: ./prod/database
   prune: true
   wait: true
+  dependsOn:
+    - name: vpn
+      namespace: flux-system
