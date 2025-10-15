@@ -2,12 +2,12 @@ isInit: false
 name: "go-template"
 image: "ghcr.io/iypetrov/go-template:1.15.0"
 hostname: "template.ip812.com"
-healthCheckEndpoint: "/healthz"
 replicas: 1
 minMemory: "64Mi"
 maxMemory: "128Mi"
 minCPU: "50m"
 maxCPU: "100m"
+healthCheckEndpoint: "/healthz"
 database:
   postgres:
     name: "template"
