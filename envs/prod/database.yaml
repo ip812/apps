@@ -9,7 +9,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./prod/database
+  path: ./envs/prod/database
   prune: true
   wait: true
   dependsOn:

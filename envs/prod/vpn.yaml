@@ -9,7 +9,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./prod/vpn
+  path: ./envs/prod/vpn
   prune: true
   wait: true
   dependsOn:

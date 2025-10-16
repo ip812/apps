@@ -9,7 +9,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./prod/ingress
+  path: ./envs/prod/ingress
   prune: true
   wait: true
   dependsOn:
