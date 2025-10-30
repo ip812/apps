@@ -47,4 +47,24 @@ spec:
             initialDelaySeconds: 5 
             periodSeconds: 5 
             timeoutSeconds: 3 
-            failureThreshold: 3 
+            failureThreshold: 3
+        - name: cloudflared
+          image: "{{ .Values.cloudflared.image }}"
+          args:
+            - "tunnel"
+            - "run"
+            - "--protocol"
+            - "http2"
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.cloudflared.secretName }}
+                  key: TUNNEL_TOKEN
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 20241
+            failureThreshold: 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
