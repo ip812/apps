@@ -49,7 +49,7 @@ spec:
             timeoutSeconds: 3 
             failureThreshold: 3
         - name: cloudflared
-          image: "{{ .Values.cloudflared.image }}"
+          image: "cloudflare/cloudflared:2025.7.0"
           args:
             - "tunnel"
             - "run"
@@ -59,7 +59,7 @@ spec:
             - name: TUNNEL_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.cloudflared.secretName }}
+                  name: cloudflared-creds
                   key: TUNNEL_TOKEN
           livenessProbe:
             httpGet:
