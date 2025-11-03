@@ -4,22 +4,22 @@ kind: Deployment
 metadata:
   name: "{{ .Values.name }}-deploy"
   labels:
-    app: "{{ .Values.name }}" 
+    app: {{ .Values.name | quote }} 
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: "{{ .Values.name }}"  
+      app: {{ .Values.name | quote }}  
   template:
     metadata:
       labels:
-        app: "{{ .Values.name }}"  
+        app: {{ .Values.name | quote }}  
     spec:
       imagePullSecrets:
         - name: ghcr-auth
       containers:
-        - name: "{{ .Values.name }}"  
-          image: "{{ .Values.image }}" 
+        - name: {{ .Values.name | quote }}  
+          image: {{ .Values.image | quote }} 
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -27,14 +27,14 @@ spec:
 {{- toYaml .Values.env | nindent 12 }}
           resources:
             requests:
-              memory: "{{ .Values.minMemory }}"
-              cpu: "{{ .Values.minCPU }}"
+              memory: {{ .Values.minMemory | quote }}
+              cpu: {{ .Values.minCPU | quote }}
             limits:
-              memory: "{{ .Values.maxMemory }}"
-              cpu: "{{ .Values.maxCPU }}"
+              memory: {{ .Values.maxMemory | quote }}
+              cpu: {{ .Values.maxCPU | quote }}
           livenessProbe:
             httpGet:
-              path: "{{ .Values.healthCheckEndpoint }}"
+              path: {{ .Values.healthCheckEndpoint | quote }}
               port: 8080
             initialDelaySeconds: 30 
             periodSeconds: 10 
@@ -42,7 +42,7 @@ spec:
             failureThreshold: 3 
           readinessProbe:
             httpGet:
-              path: "{{ .Values.healthCheckEndpoint }}"
+              path: {{ .Values.healthCheckEndpoint | quote }}
               port: 8080
             initialDelaySeconds: 5 
             periodSeconds: 5 

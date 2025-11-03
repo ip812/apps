@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: "{{ .Values.name }}"
+    app: {{ .Values.name | quote }}
   ports:
     - protocol: TCP
       port: 8080

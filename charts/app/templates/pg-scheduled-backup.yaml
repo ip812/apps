@@ -5,7 +5,7 @@ metadata:
   name: "{{ .Values.database.postgres.name }}-daily-backup"
 spec:
   immediate: true
-  schedule: "{{ .Values.database.postgres.backupSchedule }}"
+  schedule: {{ .Values.database.postgres.backupSchedule | quote }}
   backupOwnerReference: cluster
   cluster:
     name: "{{ .Values.database.postgres.name }}-pg"

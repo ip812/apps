@@ -6,7 +6,7 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
-  imageName: "{{ .Values.database.postgres.image }}"
+  imageName: {{ .Values.database.postgres.image | quote }}
   instances: 1
   primaryUpdateStrategy: unsupervised
   enablePDB: false
@@ -14,50 +14,50 @@ spec:
     enablePodMonitor: true
   storage:
     storageClass: local-path
-    size: "{{ .Values.database.postgres.storageSize }}"
+    size: {{ .Values.database.postgres.storageSize | quote }}
   bootstrap:
     {{- if .Values.isInit }}
     initdb:
-      database: "{{ .Values.database.postgres.name }}"
-      owner: "{{ .Values.database.postgres.username }}"
+      database: {{ .Values.database.postgres.name | quote }}
+      owner: {{ .Values.database.postgres.username | quote }}
       secret:
         name: "{{ .Values.name }}-creds"
     {{- else }}
     recovery:
-      source: "{{ .Values.database.postgres.name }}-pg-backup"
-      database: "{{ .Values.database.postgres.name }}"
-      owner: "{{ .Values.database.postgres.username }}"
+      source: {{ printf "%s-pg-backup" .Values.database.postgres.name | quote }}
+      database: {{ .Values.database.postgres.name | quote }}
+      owner: {{ .Values.database.postgres.username | quote }}
       secret:
         name: "{{ .Values.name }}-creds"
     {{- end }}
   externalClusters:
-    - name: "{{ .Values.database.postgres.name }}-pg-backup"
+    - name: {{ printf "%s-pg-backup" .Values.database.postgres.name | quote }}
       barmanObjectStore:
-        serverName: "{{ .Values.database.postgres.name }}-pg"
-        destinationPath: "s3://{{ .Values.database.postgres.backupsBucket }}"
+        serverName: {{ printf "%s-pg" .Values.database.postgres.name | quote }}
+        destinationPath: {{ printf "s3://%s" .Values.database.postgres.backupsBucket | quote }}
         s3Credentials:
           accessKeyId:
-            name: "{{ .Values.name }}-creds"
+            name: {{ printf "%s-creds" .Values.name | quote }}
             key: AWS_ACCESS_KEY_ID
           secretAccessKey:
-            name: "{{ .Values.name }}-creds"
+            name: {{ printf "%s-creds" .Values.name | quote }}
             key: AWS_SECRET_ACCESS_KEY
           region:
-            name: "{{ .Values.name }}-creds"
+            name: {{ printf "%s-creds" .Values.name | quote }}
             key: AWS_REGION
   backup:
     barmanObjectStore:
-      destinationPath: "s3://{{ .Values.database.postgres.backupsBucket }}"
-      retentionPolicy: "{{ .Values.database.postgres.retentionPolicy }}"
+      destinationPath: {{ printf "s3://%s" .Values.database.postgres.backupsBucket | quote }}
+      retentionPolicy: {{ .Values.database.postgres.retentionPolicy | quote }}
       s3Credentials:
         accessKeyId:
-          name: "{{ .Values.name }}-creds"
+          name: {{ printf "%s-creds" .Values.name | quote }}
           key: AWS_ACCESS_KEY_ID
         secretAccessKey:
-          name: "{{ .Values.name }}-creds"
+          name: {{ printf "%s-creds" .Values.name | quote }}
           key: AWS_SECRET_ACCESS_KEY
         region:
-          name: "{{ .Values.name }}-creds"
+          name: {{ printf "%s-creds" .Values.name | quote }}
           key: AWS_REGION
       wal:
         compression: gzip
