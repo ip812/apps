@@ -23,11 +23,20 @@ spec:
     kind: OCIRepository
     name: capacitor
   wait: true
-  patchesStrategicMerge:
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: capacitor
-      namespace: flux-system
-      annotations:
-        tailscale.com/expose: "true"
+  patches:
+    # - patch: |
+    #     metadata:
+    #       annotations:
+    #         tailscale.com/expose: "true"
+    #   target:
+    #     kind: Service
+    #     name: capacitor
+    #     namespace: flux-system
+    - patch: |
+        - op: replace
+          path: /spec/ports/0/port
+          value: 80
+      target:
+        kind: Service
+        name: capacitor
+        namespace: flux-system
