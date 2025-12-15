@@ -25,9 +25,9 @@ spec:
   wait: true
   patches:
     - patch: |
-        - op: add
-          path: /metadata/annotations/tailscale.com/expose
-          value: "true"
+        metadata:
+          annotations:
+            tailscale.com/expose: "true"
       target:
         kind: Service
         name: capacitor
