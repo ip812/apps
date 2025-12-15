@@ -11,9 +11,6 @@ spec:
       - pgadmin
   defaultBackend:
     service:
-      name: nginx
-      port:
-        number: 80
       name: pgadmin-svc
       port:
         number: 8080
