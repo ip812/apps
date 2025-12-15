@@ -5,7 +5,6 @@ resources:
 - doppler.yaml
 - monitoring.yaml
 - vpn.yaml
-- capacitor.yaml
 - database.yaml
 - go-template.yaml
 - blog.yaml
