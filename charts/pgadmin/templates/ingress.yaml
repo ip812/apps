@@ -7,16 +7,13 @@ metadata:
 spec:
   ingressClassName: tailscale
   tls:
-  - hosts:
-    - pgadmin
-  rules:
-    - host: pgadmin.taile31a9d.ts.net
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: pgadmin-svc
-                port:
-                  number: 8080
+    - hosts:
+      - pgadmin
+  defaultBackend:
+    service:
+      name: nginx
+      port:
+        number: 80
+      name: pgadmin-svc
+      port:
+        number: 8080
