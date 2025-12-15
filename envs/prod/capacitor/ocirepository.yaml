@@ -31,7 +31,6 @@ spec:
       target:
         kind: Service
         name: capacitor
-        namespace: flux-system
     - patch: |
         - op: add
           path: /metadata/annotations/tailscale.com~1hostname
@@ -39,7 +38,6 @@ spec:
       target:
         kind: Service
         name: capacitor
-        namespace: flux-system
     - patch: |
         - op: replace
           path: /spec/ports/0/port
@@ -47,7 +45,6 @@ spec:
       target:
         kind: Service
         name: capacitor
-        namespace: flux-system
     - patch: |
         - op: add
           path: /spec/ports/0/targetPort
@@ -55,4 +52,3 @@ spec:
       target:
         kind: Service
         name: capacitor
-        namespace: flux-system
