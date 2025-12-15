@@ -23,3 +23,12 @@ spec:
     kind: OCIRepository
     name: capacitor
   wait: true
+  patches:
+  - patch: |
+      - op: add
+        path: /metadata/annotations/tailscale.com/expose
+        value: "true"
+    target:
+      kind: Service
+      name: capacitor
+      namespace: flux-system
