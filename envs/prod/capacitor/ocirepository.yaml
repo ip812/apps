@@ -24,14 +24,14 @@ spec:
     name: capacitor
   wait: true
   patches:
-    # - patch: |
-    #     metadata:
-    #       annotations:
-    #         tailscale.com/expose: "true"
-    #   target:
-    #     kind: Service
-    #     name: capacitor
-    #     namespace: flux-system
+    - patch: |
+        - op: app
+          path: /metadata/annotations/tailscale.com~1expose
+          value: "true"
+      target:
+        kind: Service
+        name: capacitor
+        namespace: flux-system
     - patch: |
         - op: replace
           path: /spec/ports/0/port
