@@ -13,5 +13,5 @@ spec:
   prune: true
   wait: true
   dependsOn:
-    - name: vpn
+    - name: tailscale
       namespace: flux-system
