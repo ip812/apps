@@ -40,3 +40,11 @@ spec:
         kind: Service
         name: capacitor
         namespace: flux-system
+    - patch: |
+        - op: replace
+          path: /spec/ports/0/containerPort
+          value: 9000
+      target:
+        kind: Service
+        name: capacitor
+        namespace: flux-system
