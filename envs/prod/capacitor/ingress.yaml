@@ -5,12 +5,18 @@ metadata:
   name: capacitor-ingress
   namespace: flux-system
 spec:
-  defaultBackend:
-    service:
-      name: capacitor
-      port:
-        number: 9000
   ingressClassName: tailscale
   tls:
     - hosts:
         - capacitor
+  rules:
+    - host: capacitor.taile31a9d.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: capacitor
+                port:
+                  number: 9000

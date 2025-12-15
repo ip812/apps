@@ -5,12 +5,18 @@ metadata:
   name: pgadmin-ingress
   namespace: database
 spec:
-  defaultBackend:
-    service:
-      name: pgadmin-svc
-      port:
-        number: 8080
   ingressClassName: tailscale
   tls:
     - hosts:
         - pgadmin
+  rules:
+    - host: pgadmin.taile31a9d.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin-svc
+                port:
+                  number: 8080
