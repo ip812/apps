@@ -5,6 +5,7 @@ metadata:
   name: pgadmin-svc
   annotations:
     tailscale.com/expose: "true"
+    tailscale.com/hostname: pgadmin
 spec:
   type: ClusterIP
   selector:
