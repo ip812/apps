@@ -7,8 +7,8 @@ metadata:
 spec:
   ingressClassName: tailscale
   tls:
-    - hosts:
-        - pgadmin
+  - hosts:
+    - pgadmin
   rules:
     - host: pgadmin.taile31a9d.ts.net
       http:
