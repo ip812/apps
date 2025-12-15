@@ -9,7 +9,7 @@ spec:
     service:
       name: pgadmin-svc
       port:
-        number: 8081
+        number: 8080
   ingressClassName: tailscale
   tls:
     - hosts:
