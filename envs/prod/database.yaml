@@ -12,6 +12,3 @@ spec:
   path: ./envs/prod/database
   prune: true
   wait: true
-  dependsOn:
-    - name: tailscale
-      namespace: flux-system
