@@ -40,15 +40,8 @@ spec:
         name: capacitor
     - patch: |
         - op: replace
-          path: /spec/ports/0/port
-          value: 80
-      target:
-        kind: Service
-        name: capacitor
-    - patch: |
-        - op: add
-          path: /spec/ports/0/targetPort
-          value: 9000
+          path: /spec/type
+          value: LoadBalancer
       target:
         kind: Service
         name: capacitor
