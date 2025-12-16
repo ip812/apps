@@ -9,6 +9,7 @@ metadata:
     tailscale.com/hostname: capacitor
 spec:
   type: LoadBalancer
+  loadBalancerClass: tailscale
   selector:
     app.kubernetes.io/instance: capacitor
   ports:

@@ -8,6 +8,7 @@ metadata:
     tailscale.com/hostname: pgadmin
 spec:
   type: LoadBalancer
+  loadBalancerClass: tailscale
   selector:
     app: pgadmin
   ports:
