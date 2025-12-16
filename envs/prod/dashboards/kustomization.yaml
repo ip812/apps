@@ -2,19 +2,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- namespace.yaml
-- secret.yaml
-- ocirepository.yaml
-- helmrepository.yaml
-- helmrelease.yaml
+- podmonitor.yaml
 configMapGenerator:
-  - name: flux-kube-state-metrics-config
+  - name: flux-grafana-dashboards
     namespace: monitoring
     files:
-      - kube-state-metrics-config.yaml
+      - dashboards/control-plane.json
+      - dashboards/cluster.json
+      - dashboards/logs.json
     options:
       labels:
+        grafana_dashboard: "1"
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/component: monitoring
-configurations:
-  - kustomizeconfig.yaml
+        kustomize.toolkit.fluxcd.io/substitute: disabled
