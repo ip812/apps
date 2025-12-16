@@ -7,10 +7,10 @@ metadata:
     tailscale.com/expose: "true"
     tailscale.com/hostname: pgadmin
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: pgadmin
   ports:
     - protocol: TCP
-      port: 80
+      port: 8080
       targetPort: 80
