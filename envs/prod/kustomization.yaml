@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
 - doppler.yaml
 - cloudflared.yaml
-- prometheus.yaml
+- monitoring.yaml
 - capacitor.yaml
 - postgres.yaml
 - go-template.yaml
