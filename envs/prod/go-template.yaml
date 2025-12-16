@@ -13,5 +13,5 @@ spec:
   prune: true
   wait: true
   dependsOn:
-    - name: database
+    - name: postgres
       namespace: flux-system
