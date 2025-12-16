@@ -4,10 +4,6 @@ kind: Job
 metadata:
   name: tailscale-remove-stale-devices
   namespace: tailscale
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "0"
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
 spec:
   backoffLimit: 5
   template:
@@ -28,7 +24,7 @@ spec:
               done
               NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
               echo "Current time in UTC: ${NOW}"
-              echo "${DEVICES}" | jq -r '.devices[] | "\(.name) \(.id) \(.lastSeen)"' | grep -E -e '^pgadmin*' -e '^tailscale-operator*' | cut -d ' ' -f 2,3> /tmp/devices.txt
+              echo "${DEVICES}" | jq -r '.devices[] | "\(.name) \(.id) \(.lastSeen)"' | grep -E -e '^capacitor*' -e '^pgadmin*' -e '^tailscale-operator*' | cut -d ' ' -f 2,3> /tmp/devices.txt
               if [ ! -s /tmp/devices.txt ]; then
                 echo "Error: No devices found in API response or JQ processing failed"
                 exit 1

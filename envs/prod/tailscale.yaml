@@ -13,5 +13,7 @@ spec:
   prune: true
   wait: true
   dependsOn:
+    - name: tailscale-cleanup-stale-devices
+      namespace: flux-system
     - name: doppler
       namespace: flux-system
