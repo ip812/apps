@@ -173,3 +173,33 @@ spec:
       clients:
         - url: http://loki-gateway/loki/api/v1/push
           tenant_id: 1
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jaeger
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: jaeger
+      sourceRef:
+        kind: HelmRepository
+        name: jaegertracing
+      interval: 60m
+  values:
+    provisionDataStore:
+      elasticsearch: true
+    storage:
+      type: elasticsearch
+    elasticsearch:
+      master:
+        masterOnly: false
+        replicaCount: 1
+      data:
+        replicaCount: 0
+      coordinating:
+        replicaCount: 0
+      ingest:
+        replicaCount: 0

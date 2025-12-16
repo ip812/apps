@@ -7,3 +7,12 @@ metadata:
 spec:
   interval: 120m0s
   url: https://grafana.github.io/helm-charts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: jaegertracing
+  namespace: monitoring
+spec:
+  interval: 120m0s
+  url: https://jaegertracing.github.io/helm-charts
