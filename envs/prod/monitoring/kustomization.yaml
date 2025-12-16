@@ -10,6 +10,7 @@ resources:
 - podmonitor.yaml
 configMapGenerator:
   - name: flux-kube-state-metrics-config
+    namespace: monitoring
     files:
       - kube-state-metrics-config.yaml
     options:
@@ -17,6 +18,7 @@ configMapGenerator:
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/component: monitoring
   - name: flux-grafana-dashboards
+    namespace: monitoring
     files:
       - dashboards/control-plane.json
       - dashboards/cluster.json
