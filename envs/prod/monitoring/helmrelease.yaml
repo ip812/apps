@@ -42,6 +42,10 @@ spec:
     grafana:
       defaultDashboardsEnabled: false
       adminPassword: flux
+      grafana.ini:
+        server:
+          root_url: https://grafana.ip812.com
+          serve_from_sub_path: false
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
