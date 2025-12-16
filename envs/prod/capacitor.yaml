@@ -8,7 +8,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
   name: capacitor
-  namespace: capacitor
+  namespace: flux-system
 spec:
   interval: 12h
   url: oci://ghcr.io/gimlet-io/capacitor-manifests
@@ -19,12 +19,15 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: capacitor-oci
-  namespace: capacitor
+  namespace: flux-system
 spec:
-  interval: 10m
-  path: ./
+  targetNamespace: capacitor
+  interval: 1h
+  retryInterval: 2m
+  timeout: 5m
+  wait: true
   prune: true
+  path: "./"
   sourceRef:
     kind: OCIRepository
     name: capacitor
-  wait: true
