@@ -4,8 +4,6 @@ kind: Kustomization
 resources:
 - doppler.yaml
 - monitoring.yaml
-- tailscale-cleanup-stale-devices.yaml
-- tailscale.yaml
 - capacitor.yaml
 - database.yaml
 - go-template.yaml
