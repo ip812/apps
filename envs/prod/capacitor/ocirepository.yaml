@@ -23,25 +23,3 @@ spec:
     kind: OCIRepository
     name: capacitor
   wait: true
-  patches:
-    - patch: |
-        - op: add
-          path: /metadata/annotations/tailscale.com~1expose
-          value: "true"
-      target:
-        kind: Service
-        name: capacitor
-    - patch: |
-        - op: add
-          path: /metadata/annotations/tailscale.com~1hostname
-          value: "capacitor"
-      target:
-        kind: Service
-        name: capacitor
-    - patch: |
-        - op: replace
-          path: /spec/type
-          value: LoadBalancer
-      target:
-        kind: Service
-        name: capacitor
