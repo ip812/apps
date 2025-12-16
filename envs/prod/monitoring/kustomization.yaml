@@ -18,3 +18,12 @@ configMapGenerator:
         app.kubernetes.io/component: monitoring
 configurations:
   - kustomizeconfig.yaml
+patches:
+  - patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 500m
+    target:
+      kind: StatefulSet
+      name: elasticsearch-master
+      namespace: monitoring
