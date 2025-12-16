@@ -13,3 +13,6 @@ spec:
   prune: true
   wait: true
   timeout: 2m
+  dependsOn:
+    - name: doppler
+      namespace: flux-system
