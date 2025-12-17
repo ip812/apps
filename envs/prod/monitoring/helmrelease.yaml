@@ -192,18 +192,19 @@ spec:
         kind: HelmRepository
         name: jaegertracing
       interval: 60m
-  values:
-    provisionDataStore:
-      elasticsearch: true
-    storage:
-      type: elasticsearch
-    elasticsearch:
-      master:
-        masterOnly: false
-        replicaCount: 1
-      data:
-        replicaCount: 0
-      coordinating:
-        replicaCount: 0
-      ingest:
-        replicaCount: 0
+  # too much memory consumption with ES storage, use in-memory
+  # values:
+  #   provisionDataStore:
+  #     elasticsearch: true
+  #   storage:
+  #     type: elasticsearch
+  #   elasticsearch:
+  #     master:
+  #       masterOnly: false
+  #       replicaCount: 1
+  #     data:
+  #       replicaCount: 0
+  #     coordinating:
+  #       replicaCount: 0
+  #     ingest:
+  #       replicaCount: 0
