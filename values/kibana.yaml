@@ -2,7 +2,7 @@ replicas: 1
 resources:
   requests:
     cpu: "400m"
-    memory: "256Mi"
+    memory: "512Mi"
   limits:
     cpu: "400m"
-    memory: "256Mi"
+    memory: "512Mi"
