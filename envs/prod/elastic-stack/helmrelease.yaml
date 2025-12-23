@@ -2,6 +2,21 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
+  name: elastic-operator
+  namespace: elastic-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: eck-operator
+      sourceRef:
+        kind: HelmRepository
+        name: elastic
+        namespace: elastic-system
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
   name: es-kb-stack
   namespace: elastic-stack
 spec:
@@ -12,4 +27,4 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: elastic
-        namespace: elastic-stack
+        namespace: elastic-system
