@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: elastic-system
+  valuesFrom:
+    - kind: ConfigMap
+      name: eck-operator-values
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
