@@ -1,0 +1,153 @@
+logLevel: info
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+config:
+  parsers: |
+    [PARSER]
+        Name        docker
+        Format      json
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  customParsers: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  service: |
+    [SERVICE]
+        Flush 1
+        Daemon Off
+        Log_Level info
+        Parsers_File parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port 2020
+  inputs: |
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        Parser docker
+        Tag kube.*
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+  filters: |
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Merge_Log_Trim On
+        Labels On
+        Annotations Off
+        K8S-Logging.Parser Off
+        K8S-Logging.Exclude Off
+  outputs: |
+    [OUTPUT]
+        Name es
+        Match kube.*
+        Host elasticsearch-master.elasticsearch
+        Port 9200
+        Index logs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# TODO: enable monitoring
+serviceMonitor:
+  enabled: false
+  #   namespace: monitoring
+  #   interval: 10s
+  #   scrapeTimeout: 10s
+  #   selector:
+  #    prometheus: my-prometheus
+  #  ## metric relabel configs to apply to samples before ingestion.
+  #  ##
+  #  metricRelabelings:
+  #    - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #      targetLabel: cluster
+  #      regex: (.*)
+  #      replacement: ${1}
+  #      action: replace
+  #  ## relabel configs to apply to samples after ingestion.
+  #  ##
+  #  relabelings:
+  #    - sourceLabels: [__meta_kubernetes_pod_node_name]
+  #      separator: ;
+  #      regex: ^(.*)$
+  #      targetLabel: nodename
+  #      replacement: $1
+  #      action: replace
+  #  scheme: ""
+  #  tlsConfig: {}
+
+  ## Bear in mind if you want to collect metrics from a different port
+  ## you will need to configure the new ports on the extraPorts property.
+  additionalEndpoints: []
+  # - port: metrics
+  #   path: /metrics
+  #   interval: 10s
+  #   scrapeTimeout: 10s
+  #   scheme: ""
+  #   tlsConfig: {}
+  #   # metric relabel configs to apply to samples before ingestion.
+  #   #
+  #   metricRelabelings:
+  #     - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #       targetLabel: cluster
+  #       regex: (.*)
+  #       replacement: ${1}
+  #       action: replace
+  #   # relabel configs to apply to samples after ingestion.
+  #   #
+  #   relabelings:
+  #     - sourceLabels: [__meta_kubernetes_pod_node_name]
+  #       separator: ;
+  #       regex: ^(.*)$
+  #       targetLabel: nodename
+  #       replacement: $1
+  #       action: replace
+prometheusRule:
+  enabled: false
+#   namespace: ""
+#   additionalLabels: {}
+#   rules:
+#   - alert: NoOutputBytesProcessed
+#     expr: rate(fluentbit_output_proc_bytes_total[5m]) == 0
+#     annotations:
+#       message: |
+#         Fluent Bit instance {{ $labels.instance }}'s output plugin {{ $labels.name }} has not processed any
+#         bytes for at least 15 minutes.
+#       summary: No Output Bytes Processed
+#     for: 15m
+#     labels:
+#       severity: critical
+dashboards:
+  enabled: false
+  labelKey: grafana_dashboard
+  labelValue: 1
+  annotations: {}
+  namespace: ""
+  deterministicUid: false
