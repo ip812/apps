@@ -7,20 +7,14 @@ resources:
 - helmrepository.yaml
 - helmrelease.yaml
 configMapGenerator:
-  - name: eck-operator-values
-    namespace: elastic-system
-    options:
-      disableNameSuffixHash: true
-    files:
-      - values.yaml=../../../values/eck-operator.yaml
   - name: kibana-values
-    namespace: elastic-stack
+    namespace: elasticsearch
     options:
       disableNameSuffixHash: true
     files:
       - values.yaml=../../../values/kibana.yaml
   - name: elasticsearch-values
-    namespace: elastic-stack
+    namespace: elasticsearch
     options:
       disableNameSuffixHash: true
     files:

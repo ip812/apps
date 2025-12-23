@@ -2,37 +2,33 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: elastic-operator
-  namespace: elastic-system
+  name: elasticsearch
+  namespace: elasticsearch
 spec:
   interval: 5m
   chart:
     spec:
-      chart: eck-operator
+      chart: elasticsearch
       sourceRef:
         kind: HelmRepository
         name: elastic
-        namespace: elastic-system
-  valuesFrom:
+        namespace: elasticsearch
     - kind: ConfigMap
-      name: eck-operator-values
+      name: elasticsearch-values
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: es-kb-stack
-  namespace: elastic-stack
+  name: kibana
+  namespace: elasticsearch
 spec:
   interval: 5m
   chart:
     spec:
-      chart: eck-stack
+      chart: kibana
       sourceRef:
         kind: HelmRepository
         name: elastic
-        namespace: elastic-system
-  valuesFrom:
+        namespace: elasticsearch
     - kind: ConfigMap
       name: kibana-values
-    - kind: ConfigMap
-      name: elasticsearch-values
