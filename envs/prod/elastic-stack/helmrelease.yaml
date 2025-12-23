@@ -28,3 +28,8 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: elastic-system
+  valuesFrom:
+    - kind: ConfigMap
+      name: kibana-values
+    - kind: ConfigMap
+      name: elasticsearch-values

@@ -6,3 +6,16 @@ resources:
 - secret.yaml
 - helmrepository.yaml
 - helmrelease.yaml
+configMapGenerator:
+  - name: kibana-values
+    namespace: elastic-stack
+    options:
+      disableNameSuffixHash: true
+    files:
+      - values.yaml=../../../values/kibana.yaml
+  - name: elasticsearch-values
+    namespace: elastic-stack
+    options:
+      disableNameSuffixHash: true
+    files:
+      - values.yaml=../../../values/elasticsearch.yaml

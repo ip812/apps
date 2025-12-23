@@ -1,0 +1,8 @@
+replicas: 1
+secret:
+  enabled: true
+  password: "foo" # generated randomly if not defined
+resources:
+  limits:
+    cpu: "200m"
+    memory: "512Mi"
