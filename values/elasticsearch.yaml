@@ -1,8 +1,2 @@
 replicas: 1
-secret:
-  enabled: true
-  password: "foo" # generated randomly if not defined
-resources:
-  limits:
-    cpu: "500m"
-    memory: "768Mi"
+minimumMasterNodes: 1
