@@ -13,6 +13,7 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: elasticsearch
+  valuesFrom:
     - kind: ConfigMap
       name: elasticsearch-values
 ---
@@ -30,5 +31,6 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: elasticsearch
+  valuesFrom:
     - kind: ConfigMap
       name: kibana-values
