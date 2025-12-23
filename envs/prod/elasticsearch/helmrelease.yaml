@@ -13,9 +13,6 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: elasticsearch
-  valuesFrom:
-    - kind: ConfigMap
-      name: elasticsearch-values
 # ---
 # apiVersion: helm.toolkit.fluxcd.io/v2
 # kind: HelmRelease
