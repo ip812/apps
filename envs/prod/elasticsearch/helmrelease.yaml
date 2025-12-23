@@ -34,3 +34,6 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: kibana-values
+  dependsOn:
+    - name: elasticsearch
+      namespace: elasticsearch
