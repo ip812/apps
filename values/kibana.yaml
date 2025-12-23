@@ -1,5 +1,8 @@
 replicas: 1
 resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
   limits:
     cpu: "200m"
     memory: "512Mi"
