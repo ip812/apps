@@ -3,9 +3,6 @@ secret:
   enabled: true
   password: "foo" # generated randomly if not defined
 resources:
-  requests:
-    cpu: "200m"
-    memory: "512Mi"
   limits:
-    cpu: "200m"
-    memory: "512Mi"
+    cpu: "500m"
+    memory: "768Mi"
