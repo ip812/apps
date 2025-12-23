@@ -5,6 +5,7 @@ resources:
 - doppler.yaml
 - cloudflared.yaml
 - monitoring.yaml
+- elastic-stack.yaml
 - capacitor.yaml
 - postgres.yaml
 - go-template.yaml
