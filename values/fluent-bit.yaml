@@ -51,7 +51,7 @@ config:
     [OUTPUT]
         Name es
         Match kube.*
-        Host elasticsearch-master.elasticsearch.svc.cluster.local
+        Host elasticsearch-master.elasticsearch
         Port 9200
         Index logs
 
