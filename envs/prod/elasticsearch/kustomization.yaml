@@ -19,3 +19,16 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - values.yaml=../../../values/elasticsearch.yaml
+patches:
+  - target:
+      kind: StatefulSet
+      name: elasticsearch-master
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: ELASTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-secret
+              key: ES_PASSWORD
