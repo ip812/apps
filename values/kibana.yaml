@@ -1,5 +1,5 @@
 replicas: 1
-elasticsearchCredentialSecret: elasticsearch-secret
+elasticsearchCredentialSecret: kibana-secret
 resources:
   requests:
     cpu: "400m"
