@@ -1,7 +1,10 @@
 replicas: 1
 minimumMasterNodes: 1
 secret:
-  enabled: true
+  enabled: false
+envFrom:
+  - secretRef:
+      name: elasticsearch-secret
 resources:
   requests:
     cpu: "500m"

@@ -6,8 +6,6 @@ resources:
 - cloudflared.yaml
 - monitoring.yaml
 - elasticsearch.yaml
-- elasticsearch_patch.yaml
-- kibana.yaml
 - logging.yaml
 - capacitor.yaml
 - postgres.yaml

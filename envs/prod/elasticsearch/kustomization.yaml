@@ -13,3 +13,9 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - values.yaml=../../../values/elasticsearch.yaml
+  - name: kibana-values
+    namespace: elasticsearch
+    options:
+      disableNameSuffixHash: true
+    files:
+      - values.yaml=../../../values/kibana.yaml
