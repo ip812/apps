@@ -6,10 +6,7 @@ patches:
     kind: StatefulSet
     name: elasticsearch-master
     namespace: elasticsearch
-  options:
-    allowNameChange: true
-    allowKindChange: true
-  patch: |- 
+  patch: |-
     spec:
       template:
         spec:
