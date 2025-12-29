@@ -1,21 +1,23 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-patchesStrategicMerge:
-  - | 
-      apiVersion: apps/v1
-      kind: StatefulSet
-      metadata:
-        name: elasticsearch-master
-        namespace: elasticsearch
-      spec:
-        template:
-          spec:
-            containers:
-            - name: elasticsearch
-              env:
-              - name: ELASTIC_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: elasticsearch-secret
-                    key: ES_PASSWORD
+patches:
+- target:
+    kind: StatefulSet
+    name: elasticsearch-master
+    namespace: elasticsearch
+  options:
+    allowNameChange: true
+    allowKindChange: true
+  patch: |- 
+    spec:
+      template:
+        spec:
+          containers:
+          - name: elasticsearch
+            env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-secret
+                  key: ES_PASSWORD

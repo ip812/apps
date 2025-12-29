@@ -11,7 +11,7 @@ spec:
     name: flux-system
   path: ./envs/prod/elasticsearch-patch
   prune: true
-  wait: true
+  wait: false
   dependsOn:
     - name: elasticsearch
       namespace: flux-system
