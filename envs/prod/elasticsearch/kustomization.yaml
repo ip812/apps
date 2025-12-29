@@ -19,11 +19,15 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - values.yaml=../../../values/elasticsearch.yaml
-patches:
+patchesStrategicMerge:
   - target:
       kind: StatefulSet
       name: elasticsearch-master
     patch: |-
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: elasticsearch-master
       spec:
         template:
           spec:
