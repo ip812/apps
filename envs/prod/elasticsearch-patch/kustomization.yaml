@@ -7,14 +7,14 @@ patches:
     name: elasticsearch-master
     namespace: elasticsearch
   patch: |-
-  - op: test
-    path: /spec/template/spec/containers/0/env/7/name
-    value: ELASTIC_PASSWORD
-  - op: replace
-    path: "/spec/template/spec/containers/0/env/7"
-    value:
-      name: ENV_VAR_TO_REPLACE
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-secret
-          key: ES_PASSWORD
+    - op: test
+      path: /spec/template/spec/containers/0/env/6/name
+      value: ELASTIC_PASSWORD
+    - op: replace
+      path: "/spec/template/spec/containers/0/env/6"
+      value:
+        name: ENV_VAR_TO_REPLACE
+        valueFrom:
+          secretKeyRef:
+            name: elasticsearch-secret
+            key: ES_PASSWORD
