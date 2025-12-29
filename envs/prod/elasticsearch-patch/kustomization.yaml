@@ -7,9 +7,6 @@ patches:
     name: elasticsearch-master
     namespace: elasticsearch
   patch: |-
-    - op: test
-      path: /spec/template/spec/containers/0/env/6/name
-      value: ELASTIC_PASSWORD
     - op: replace
       path: "/spec/template/spec/containers/0/env/6"
       value:
