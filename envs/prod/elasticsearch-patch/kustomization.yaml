@@ -13,7 +13,7 @@ patches:
     - op: replace
       path: "/spec/template/spec/containers/0/env/6"
       value:
-        name: ENV_VAR_TO_REPLACE
+        name: ELASTIC_PASSWORD
         valueFrom:
           secretKeyRef:
             name: elasticsearch-secret
