@@ -6,6 +6,9 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+envFrom:
+  - secretRef:
+      name: logging-secret
 config:
   parsers: |
     [PARSER]
@@ -55,8 +58,8 @@ config:
         Host elasticsearch-master.elasticsearch
         Port 9200
         Index logs
-        HTTP_User elastic
-        HTTP_Passwd admin123
+        HTTP_User ${ELASTICSEARCH_USERNAME}
+        HTTP_Passwd ${ELASTICSEARCH_PASSWORD}
         tls On
         tls.verify Off
         Logstash_Format On
