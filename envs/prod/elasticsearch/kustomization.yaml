@@ -25,6 +25,7 @@ patchesStrategicMerge:
       kind: StatefulSet
       metadata:
         name: elasticsearch-master
+        namespace: elasticsearch
       spec:
         template:
           spec:
