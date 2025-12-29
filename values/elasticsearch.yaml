@@ -4,7 +4,7 @@ secret:
   enabled: false
 envFrom:
   - secretRef:
-      name: elasticsearch-secret
+      name: kibana-secret
 resources:
   requests:
     cpu: "500m"
