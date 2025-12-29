@@ -58,8 +58,8 @@ config:
         Host elasticsearch-master.elasticsearch
         Port 9200
         Index logs
-        HTTP_User ${ELASTICSEARCH_USERNAME}
-        HTTP_Passwd ${ELASTICSEARCH_PASSWORD}
+        HTTP_User ${ELASTIC_USERNAME}
+        HTTP_Passwd ${ELASTIC_PASSWORD}
         tls On
         tls.verify Off
         Logstash_Format On
