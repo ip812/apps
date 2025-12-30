@@ -316,7 +316,9 @@ envWithTpl: []
 #
 # foo2: bar2
 
-envFrom: []
+envFrom:
+  - secretRef:
+      name: logging-secret
 
 # This supports either a structured array or a templatable string
 extraContainers: []
