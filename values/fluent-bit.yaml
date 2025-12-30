@@ -58,4 +58,4 @@ config:
         HTTP_Passwd ${ELASTIC_PASSWORD}
         Host elasticsearch-master.elasticsearch
         Port 9200
-        Index logs
+        Index fluent-bit
