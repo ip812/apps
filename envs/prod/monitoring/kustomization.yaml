@@ -4,3 +4,12 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - secret.yaml
+- helmrepository.yaml
+- helmrelease.yaml
+configMapGenerator:
+  - name: jaeger-values
+    namespace: monitoring
+    options:
+      disableNameSuffixHash: true
+    files:
+      - values.yaml=../../../values/jaeger.yaml
