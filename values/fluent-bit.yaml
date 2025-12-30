@@ -55,7 +55,7 @@ config:
         Name es
         Match kube.*
         Type  _doc
-        Host "elasticsearch-master.elasticsearch"
+        Host elasticsearch-master.elasticsearch
         Port 9200
         Index logs
         HTTP_User ${ELASTIC_USERNAME}

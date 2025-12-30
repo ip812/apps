@@ -13,3 +13,6 @@ spec:
         kind: HelmRepository
         name: fluent
         namespace: logging
+  valuesFrom:
+    - kind: ConfigMap
+      name: fluent-bit-values
