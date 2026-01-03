@@ -368,8 +368,38 @@ luaScripts:
     function set_index(tag, timestamp, record)
         index = "fluent-bit-"
         if record["kubernetes"] ~= nil then
+            if record["kubernetes"]["namespace_name"] == "capacitor" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "cloudflared" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "doppler-operator-system" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "elasticsearch" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "flux-system" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "kube-node-lease" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "kube-public" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "kube-system" then
+                return -1, timestamp, record
+            end
             if record["kubernetes"]["namespace_name"] == "logging" then
-                return -1, timestamp, record  -- Skip logs from the logging namespace
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "monitoring" then
+                return -1, timestamp, record
+            end
+            if record["kubernetes"]["namespace_name"] == "postgres" then
+                return -1, timestamp, record
             end
             if record["kubernetes"]["namespace_name"] ~= nil then
                 if record["kubernetes"]["container_name"] ~= nil then
