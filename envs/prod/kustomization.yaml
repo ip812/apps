@@ -5,10 +5,10 @@ resources:
 - doppler.yaml
 - capacitor.yaml
 - cloudflared.yaml
-- elasticsearch.yaml
-- logging.yaml
-# - monitoring.yaml
-- tracing.yaml
+# - elasticsearch.yaml
+# - logging.yaml
+- monitoring.yaml
+# - tracing.yaml
 - postgres.yaml
 - go-template.yaml
 - blog.yaml
