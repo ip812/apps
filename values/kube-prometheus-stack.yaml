@@ -4,8 +4,8 @@ prometheusOperator:
       cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 300m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
 alertmanager:
   alertmanagerSpec:
     replicas: 1
@@ -19,5 +19,5 @@ alertmanager:
         cpu: 50m
         memory: 64Mi
       limits:
-        cpu: 200m
-        memory: 128Mi
+        cpu: 50m
+        memory: 64Mi
