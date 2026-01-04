@@ -23,6 +23,8 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+            - containerPort: 2112
+              protocol: TCP
           env:
 {{- toYaml .Values.env | nindent 12 }}
           resources:
