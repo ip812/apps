@@ -15,6 +15,8 @@ env:
     value: "template.ip812.com"
   - name: APP_PORT
     value: "8080"
+  - name: APP_METRICS_PORT
+    value: "2112"
   - name: DB_NAME
     value: "template"
   - name: DB_USERNAME
