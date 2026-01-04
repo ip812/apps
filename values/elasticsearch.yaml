@@ -1,8 +1,5 @@
 replicas: 1
 minimumMasterNodes: 1
-esConfig:
-  elasticsearch.yml: |
-    discovery.type: single-node
 secret:
   enabled: false
 envFrom:
