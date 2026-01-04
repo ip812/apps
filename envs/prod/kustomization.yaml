@@ -7,7 +7,7 @@ resources:
 - cloudflared.yaml
 - elasticsearch.yaml
 - logging.yaml
-- monitoring.yaml
+# - monitoring.yaml
 - tracing.yaml
 - postgres.yaml
 - go-template.yaml
