@@ -15,5 +15,3 @@ spec:
   dependsOn:
     - name: doppler
       namespace: flux-system
-    - name: postgres
-      namespace: flux-system
