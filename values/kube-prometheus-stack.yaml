@@ -9,6 +9,8 @@ prometheusOperator:
 grafana:
   operator:
     dashboardsConfigMapRefEnabled: true
+    matchLabels:
+      app: grafana
     resyncPeriod: 10m
   admin:
     existingSecret: "monitoring-secret"
