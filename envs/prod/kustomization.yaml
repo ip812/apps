@@ -5,7 +5,7 @@ resources:
 - doppler.yaml
 - capacitor.yaml
 - cloudflared.yaml
-- elasticsearch.yaml
+# - elasticsearch.yaml
 - logging.yaml
 - monitoring.yaml
 - tracing.yaml
