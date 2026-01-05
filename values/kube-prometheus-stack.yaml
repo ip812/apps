@@ -6,6 +6,18 @@ prometheusOperator:
     limits:
       cpu: 100m
       memory: 128Mi
+grafana:
+  operator:
+    dashboardsConfigMapRefEnabled: true
+    resyncPeriod: 10m
+  admin:
+    existingSecret: "monitoring-secret"
+    userKey: GRAFANA_USERNAME
+    passwordKey: GRAFANA_PASSWORD
+  sidecar:
+    dashboards:
+      alertmanager:
+        enabled: false
 alertmanager:
   enabled: false
   alertmanagerSpec:
