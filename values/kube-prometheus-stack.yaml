@@ -46,6 +46,10 @@ prometheusOperator:
       memory: 128Mi
 prometheus:
   enabled: true
+  prometheusSpec:
+    resources:
+      requests:
+        memory: 200Mi
 grafana:
   operator:
     dashboardsConfigMapRefEnabled: false
