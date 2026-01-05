@@ -6,6 +6,7 @@ metadata:
     name: "{{ .Values.name }}-svc-monitor"
     release: monitoring
   name: "{{ .Values.name }}-svc-monitor"
+  namespace: monitoring
 spec:
   jobLabel: job
   endpoints:
