@@ -8,10 +8,10 @@ envFrom:
 resources:
   requests:
     cpu: "500m"
-    memory: "1Gi"
+    memory: "800Mi"
   limits:
     cpu: "500m"
-    memory: "1Gi"
+    memory: "800Mi"
 volumeClaimTemplate:
   resources:
     requests:
