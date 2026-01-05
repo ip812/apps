@@ -8,7 +8,7 @@ prometheusOperator:
       memory: 128Mi
 grafana:
   operator:
-    dashboardsConfigMapRefEnabled: true
+    dashboardsConfigMapRefEnabled: false
     matchLabels:
       app: grafana
     resyncPeriod: 10m
