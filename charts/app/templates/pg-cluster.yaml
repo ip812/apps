@@ -34,31 +34,27 @@ spec:
     - name: {{ printf "%s-pg-backup" .Values.database.postgres.name | quote }}
       barmanObjectStore:
         serverName: {{ printf "%s-pg" .Values.database.postgres.name | quote }}
+        endpointURL: {{ .Values.database.postgres.backupEndpoint | quote }} 
         destinationPath: {{ printf "s3://%s" .Values.database.postgres.backupsBucket | quote }}
         s3Credentials:
           accessKeyId:
             name: {{ printf "%s-creds" .Values.name | quote }}
-            key: AWS_ACCESS_KEY_ID
+            key: POSTGRES_BACKUPS_ACCESS_KEY_ID
           secretAccessKey:
             name: {{ printf "%s-creds" .Values.name | quote }}
-            key: AWS_SECRET_ACCESS_KEY
-          region:
-            name: {{ printf "%s-creds" .Values.name | quote }}
-            key: AWS_REGION
+            key: POSTGRES_BACKUPS_SECRET_ACCESS_KEY
   backup:
     barmanObjectStore:
       destinationPath: {{ printf "s3://%s" .Values.database.postgres.backupsBucket | quote }}
+      endpointURL: {{ .Values.database.postgres.backupEndpoint | quote }} 
       retentionPolicy: {{ .Values.database.postgres.retentionPolicy | quote }}
       s3Credentials:
         accessKeyId:
           name: {{ printf "%s-creds" .Values.name | quote }}
-          key: AWS_ACCESS_KEY_ID
+          key: POSTGRES_BACKUPS_ACCESS_KEY_ID
         secretAccessKey:
           name: {{ printf "%s-creds" .Values.name | quote }}
-          key: AWS_SECRET_ACCESS_KEY
-        region:
-          name: {{ printf "%s-creds" .Values.name | quote }}
-          key: AWS_REGION
+          key: POSTGRES_BACKUPS_SECRET_ACCESS_KEY
       wal:
         compression: gzip
       data:
