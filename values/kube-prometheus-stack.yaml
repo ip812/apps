@@ -88,7 +88,7 @@ alertmanager:
         cpu: 50m
         memory: 64Mi
 kubelet:
-  enabled: true
+  enabled: false
 kubeControllerManager:
   enabled: false
 kubeDns:
