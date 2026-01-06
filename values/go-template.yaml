@@ -46,4 +46,5 @@ database:
     storageSize: "1Gi"
     retentionPolicy: "7d"
     backupsBucket: "ip812-pg-backups-bucket"
+    backupEndpoint: "https://cb54b3c79e547fe9cbcc0456f67c7bbf.r2.cloudflarestorage.com"
     backupSchedule: "0 0 0 * * *"
