@@ -57,7 +57,7 @@ grafana:
       memory: 256Mi
     requests:
       cpu: 200m
-      memory: 256i
+      memory: 256Mi
   operator:
     dashboardsConfigMapRefEnabled: false
     matchLabels:
