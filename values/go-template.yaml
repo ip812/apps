@@ -45,5 +45,5 @@ database:
     username: "admin123"
     storageSize: "1Gi"
     retentionPolicy: "7d"
-    backupsBucket: "pg-backups-202507041132"
+    backupsBucket: "ip812-pg-backups-bucket"
     backupSchedule: "0 0 0 * * *"
