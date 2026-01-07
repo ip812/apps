@@ -51,6 +51,8 @@ prometheus:
       requests:
         memory: 200Mi
 grafana:
+  enabled: true
+  defaultDashboardsEnabled: false
   resources:
     limits:
       cpu: 200m
