@@ -11,7 +11,7 @@ spec:
   jobLabel: job
   endpoints:
     - interval: 60s
-      port: 2112
+      port: metrics
       path: /metrics
   selector:
     matchLabels:
