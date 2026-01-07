@@ -40,7 +40,7 @@ env:
         key: SLACK_BLOG_BOT_TOKEN
 database:
   postgres:
-    enabled: false
+    enabled: true
     name: "blog"
     host: "blog-pg-rw.blog.svc.cluster.local"
     image: "ghcr.io/cloudnative-pg/postgresql:16.1"
