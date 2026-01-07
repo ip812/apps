@@ -10,4 +10,4 @@ spec:
   backupOwnerReference: cluster
   cluster:
     name: "{{ .Values.database.postgres.name }}-pg"
-{{ - end }}
+{{- end }}
