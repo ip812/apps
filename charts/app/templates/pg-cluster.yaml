@@ -21,14 +21,14 @@ spec:
       database: {{ .Values.database.postgres.name | quote }}
       owner: {{ .Values.database.postgres.username | quote }}
       secret:
-        name: "{{ .Values.name }}-creds"
+        name: "{{ .Values.name }}-pg-bootstrap-creds"
     {{- else }}
     recovery:
       source: {{ printf "%s-pg-backup" .Values.database.postgres.name | quote }}
       database: {{ .Values.database.postgres.name | quote }}
       owner: {{ .Values.database.postgres.username | quote }}
       secret:
-        name: "{{ .Values.name }}-creds"
+        name: "{{ .Values.name }}-pg-bootstrap-creds"
     {{- end }}
   externalClusters:
     - name: {{ printf "%s-pg-backup" .Values.database.postgres.name | quote }}
