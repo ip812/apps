@@ -1,4 +1,4 @@
-isInit: true
+isInit: false
 name: "blog"
 image: "ghcr.io/iypetrov/blog:1.26.0"
 hostname: "blog.ip812.com"
