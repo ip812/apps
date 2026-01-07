@@ -27,6 +27,7 @@ spec:
   chart:
     spec:
       chart: ./charts/pgadmin
+      reconcileStrategy: Revision
       sourceRef:
         kind: GitRepository
         name: flux-system
