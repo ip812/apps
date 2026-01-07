@@ -4,7 +4,7 @@ kind: ServiceMonitor
 metadata:
   labels:
     name: "{{ .Values.name }}-svc-monitor"
-    release: monitoring
+    release: prometheus-stack
   name: "{{ .Values.name }}-svc-monitor"
   namespace: monitoring
 spec:
