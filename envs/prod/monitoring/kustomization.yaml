@@ -6,6 +6,7 @@ resources:
 - secret.yaml
 - helmrepository.yaml
 - helmrelease.yaml
+- dashboard-nodes.yaml
 configMapGenerator:
   - name: kube-prometheus-stack-values
     namespace: monitoring
