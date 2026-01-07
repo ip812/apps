@@ -3,10 +3,10 @@ kind: ConfigMap
 metadata:
   labels:
     grafana_dashboard: "1"
-  name: new-dashboard-configmap
+  name: dashboard-go-processes
   namespace: monitoring
 data:
-  new-dashboard.json: |-
+  dashboard-go-processes.json: |-
     {
       "__inputs": [
         {
