@@ -1,42 +1,4 @@
-defaultRules:
-  create: true
-  rules:
-    alertmanager: false
-    etcd: false
-    configReloaders: false
-    general: false
-    k8sContainerCpuUsageSecondsTotal: true
-    k8sContainerMemoryCache: true
-    k8sContainerMemoryRss: true
-    k8sContainerMemorySwap: true
-    k8sContainerResource: true
-    k8sContainerMemoryWorkingSetBytes: true
-    k8sPodOwner: true
-    kubeApiserverAvailability: false
-    kubeApiserverBurnrate: false
-    kubeApiserverHistogram: false
-    kubeApiserverSlos: false
-    kubeControllerManager: false 
-    kubelet: false
-    kubeProxy: false
-    kubePrometheusGeneral: false
-    kubePrometheusNodeRecording: false
-    kubernetesApps: false
-    kubernetesResources: false
-    kubernetesStorage: false
-    kubernetesSystem: false
-    kubeSchedulerAlerting: false
-    kubeSchedulerRecording: false
-    kubeStateMetrics: false
-    network: true
-    node: true
-    nodeExporterAlerting: false
-    nodeExporterRecording: false  
-    prometheus: false
-    prometheusOperator: false
-    windows: false
 prometheusOperator:
-  enabled: true
   resources:
     requests:
       cpu: 100m
@@ -45,14 +7,11 @@ prometheusOperator:
       cpu: 100m
       memory: 128Mi
 prometheus:
-  enabled: true
   prometheusSpec:
     resources:
       requests:
         memory: 200Mi
 grafana:
-  enabled: true
-  defaultDashboardsEnabled: true
   resources:
     limits:
       cpu: 200m
@@ -60,11 +19,6 @@ grafana:
     requests:
       cpu: 200m
       memory: 256Mi
-  operator:
-    dashboardsConfigMapRefEnabled: false
-    matchLabels:
-      app: grafana
-    resyncPeriod: 10m
   admin:
     existingSecret: "monitoring-secret"
     userKey: GRAFANA_USERNAME
@@ -97,22 +51,7 @@ alertmanager:
       limits:
         cpu: 50m
         memory: 64Mi
-kubelet:
-  enabled: false
-kubeControllerManager:
-  enabled: false
-kubeDns:
-  enabled: false
-kubeEtcd:
-  enabled: false
-kubeScheduler:
-  enabled: false
-kubeProxy:
-  enabled: false
-kubeStateMetrics:
-  enabled: false
 nodeExporter:
-  enabled: true
   operatingSystems:
     linux:
       enabled: true
