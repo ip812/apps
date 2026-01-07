@@ -33,6 +33,8 @@ env:
     value: "blog-pg-rw.blog.svc.cluster.local"
   - name: DB_SSL_MODE
     value: disable
+  - name: SLACK_GENERAL_CHANNEL_ID
+    value: "C08KHNSSK5M"
   - name: SLACK_BLOG_BOT_TOKEN
     valueFrom:
       secretKeyRef:
