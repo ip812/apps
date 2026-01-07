@@ -39,7 +39,7 @@ env:
     value: "true"
 database:
   postgres:
-    enabled: false
+    enabled: true
     name: "template"
     host: "template-pg-rw.go-template.svc.cluster.local"
     image: "ghcr.io/cloudnative-pg/postgresql:16.1"
