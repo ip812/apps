@@ -51,11 +51,3 @@ alertmanager:
       limits:
         cpu: 50m
         memory: 64Mi
-nodeExporter:
-  operatingSystems:
-    linux:
-      enabled: true
-    aix:
-      enabled: false
-    darwin:
-      enabled: false
