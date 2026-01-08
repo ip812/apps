@@ -40,6 +40,10 @@ env:
       secretKeyRef:
         name: "blog-creds" 
         key: SLACK_BLOG_BOT_TOKEN
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: "http://jaeger.tracing.svc.cluster.local:4318"
+  - name: OTEL_EXPORTER_OTLP_INSECURE
+    value: "true"
 database:
   postgres:
     enabled: true
