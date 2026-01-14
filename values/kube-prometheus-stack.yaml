@@ -44,6 +44,8 @@ prometheusOperator:
       memory: 128Mi
 prometheus:
   prometheusSpec:
+    retention: 1d
+    retentionSize: 2GB
     resources:
       requests:
         memory: 200Mi

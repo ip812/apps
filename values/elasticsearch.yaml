@@ -1,5 +1,8 @@
 replicas: 1
 minimumMasterNodes: 1
+esConfig:
+  elasticsearch.yml: |
+    xpack.ml.enabled: false
 secret:
   enabled: false
 envFrom:
