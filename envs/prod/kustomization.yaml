@@ -6,9 +6,9 @@ resources:
 - capacitor.yaml
 - cloudflared.yaml
 - monitoring.yaml
-- elasticsearch.yaml
+# - elasticsearch.yaml
 # - logging.yaml
-- tracing.yaml
+# - tracing.yaml
 - postgres.yaml
 - go-template.yaml
 - blog.yaml
