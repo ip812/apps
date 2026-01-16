@@ -8,7 +8,7 @@ resources:
 - monitoring.yaml
 # - elasticsearch.yaml
 # - logging.yaml
-# - tracing.yaml
+- tracing.yaml
 - postgres.yaml
 - go-template.yaml
 - blog.yaml
