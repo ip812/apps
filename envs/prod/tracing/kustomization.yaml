@@ -6,6 +6,8 @@ resources:
 - secret.yaml
 - helmrepository.yaml
 - helmrelease.yaml
+- service.yaml
+- servicemonitor.yaml
 configMapGenerator:
   - name: jaeger-values
     namespace: tracing
