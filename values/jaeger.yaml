@@ -1,7 +1,16 @@
 tag: "2.14.1"
 
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false
+
 storage:
-  type: memory
+  type: badger
+  badger:
+    ephemeral: true
+    persistence:
+      mountPath: /mnt/data
+      useExistingPvcName: ""
 #   type: elasticsearch
 #   elasticsearch:
 #     host: elasticsearch-master.elasticsearch
@@ -12,10 +21,6 @@ storage:
 #     tls:
 #       enabled: true
 #       ca: /tls/ca-cert.pem
-
-provisionDataStore:
-  cassandra: false
-  elasticsearch: false
 
 # query:
 #   cmdlineParams:
